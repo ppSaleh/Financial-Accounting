@@ -1,0 +1,52 @@
+[
+  {
+    "detail": "\r\n{\r\n  \"code\": \"22P02\",\r\n  \"details\": null,\r\n  \"hint\": null,\r\n  \"message\": \"invalid input syntax for type bigint: \\u0022__type_probe__\\u0022\"\r\n}",
+    "table": "custodies",
+    "column": "id"
+  },
+  {
+    "detail": "\r\n{\r\n  \"code\": \"22P02\",\r\n  \"details\": null,\r\n  \"hint\": null,\r\n  \"message\": \"invalid input syntax for type numeric: \\u0022__type_probe__\\u0022\"\r\n}",
+    "table": "custodies",
+    "column": "amount"
+  },
+  {
+    "detail": "\r\n{\r\n  \"code\": \"22P02\",\r\n  \"details\": null,\r\n  \"hint\": null,\r\n  \"message\": \"invalid input syntax for type numeric: \\u0022__type_probe__\\u0022\"\r\n}",
+    "table": "custodies",
+    "column": "total_amount"
+  },
+  {
+    "detail": "\r\n{\r\n  \"code\": \"22P02\",\r\n  \"details\": null,\r\n  \"hint\": null,\r\n  \"message\": \"invalid input syntax for type numeric: \\u0022__type_probe__\\u0022\"\r\n}",
+    "table": "custodies",
+    "column": "remaining_amount"
+  },
+  {
+    "detail": "\r\n{\r\n  \"code\": \"22007\",\r\n  \"details\": null,\r\n  \"hint\": null,\r\n  \"message\": \"invalid input syntax for type timestamp with time zone: \\u0022__type_probe__\\u0022\"\r\n}",
+    "table": "custodies",
+    "column": "created_at"
+  },
+  {
+    "detail": "\r\n{\r\n  \"code\": \"22P02\",\r\n  \"details\": null,\r\n  \"hint\": null,\r\n  \"message\": \"invalid input syntax for type bigint: \\u0022__type_probe__\\u0022\"\r\n}",
+    "table": "imprest_items",
+    "column": "id"
+  },
+  {
+    "status": 200,
+    "table": "imprest_items",
+    "column": "date"
+  },
+  {
+    "detail": "\r\n{\r\n  \"code\": \"22P02\",\r\n  \"details\": null,\r\n  \"hint\": null,\r\n  \"message\": \"invalid input syntax for type numeric: \\u0022__type_probe__\\u0022\"\r\n}",
+    "table": "imprest_items",
+    "column": "deposit"
+  },
+  {
+    "detail": "\r\n{\r\n  \"code\": \"22P02\",\r\n  \"details\": null,\r\n  \"hint\": null,\r\n  \"message\": \"invalid input syntax for type numeric: \\u0022__type_probe__\\u0022\"\r\n}",
+    "table": "imprest_items",
+    "column": "expense"
+  },
+  {
+    "detail": "\r\n{\r\n  \"code\": \"22007\",\r\n  \"details\": null,\r\n  \"hint\": null,\r\n  \"message\": \"invalid input syntax for type timestamp with time zone: \\u0022__type_probe__\\u0022\"\r\n}",
+    "table": "imprest_items",
+    "column": "created_at"
+  }
+]
