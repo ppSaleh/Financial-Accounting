@@ -347,4 +347,4 @@ function exportToPDF() {
         noPrintElements.forEach(el => el.style.display = '');
     });
 }
-renderApp();
+loadCustodyList();

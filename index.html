@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
         @import "tailwindcss";
+
         body {
             font-family: 'Tajawal', sans-serif;
         }
@@ -20,7 +21,7 @@
 
         <!-- الهيدر وشعار الجمعية -->
         <div
-            class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
+            class="bg-white min-h-32 p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-4">
                 <div
                     class="w-20 h-20 rounded-xl bg-gray-50 border border-gray-100 p-1 flex items-center justify-center flex-shrink-0">
@@ -32,8 +33,26 @@
                     <p class="text-xs text-gray-500 mt-0.5">Financial Accounting System</p>
                 </div>
             </div>
+            <div id="profile-menu" class="relative w-fit">
+                <button id="profile-toggle" type="button" aria-expanded="false" class="bg-gray-100 flex gap-3 p-3 rounded-2xl items-center
+                   select-none hover:bg-gray-200 cursor-pointer min-w-40 justify-between">
+                    <span id="display-name">صالح محمد</span>
+                    <i data-lucide="chevron-down"></i>
+                </button>
+
+                <div id="profile-options" inert class="absolute right-0 top-full w-full z-10
+                bg-gray-100 rounded flex flex-col whitespace-nowrap
+                opacity-0 -translate-y-2 pointer-events-none cursor-pointer
+                transition-[opacity,transform] duration-200 ease-out">
+                    <span id="profile-change-displayname" class="select-none p-3 w-full rounded hover:bg-gray-200">تغيير
+                        اسم العرض</span>
+                    <span id="profile-role" class="select-none p-3 w-full rounded hover:bg-gray-200">الرتبة: موظف</span>
+                    <span id="profile-logout" class="select-none p-3 w-full rounded hover:bg-gray-200">تسجيل خروج</span>
+                </div>
+            </div>
         </div>
 
+        <!-- Login form-->
         <div id="login-form">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 max-w-2xl mx-auto">
                 <div id="login-form" class="space-y-4">
@@ -66,21 +85,41 @@
                 </div>
             </div>
         </div>
+        <div id="displayname-overlay"
+            class="hidden overlay fixed inset-0 z-100 flex items-center justify-center bg-black/50 p-4">
+            <div class="bg-white p-6 flex flex-col gap-4 rounded-2xl shadow-sm border border-gray-200 w-96  mx-auto">
+                <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                    تغيير اسم العرض
+                </h2>
+                <input type="text" id="displayname-input" required placeholder="اسمك"
+                    class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+                <div class="gap-4 w-full flex">
+                    <button id="displayname-confirm"
+                        class="bg-emerald-600 flex-1 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl text-sm transition cursor-pointer">
+                        حفظ التعديل
+                    </button>
+                    <button id="displayname-cancel"
+                        class="bg-gray-200 flex-1 hover:bg-gray-300 text-gray-700 font-bold p-3 rounded-xl text-sm transition cursor-pointer">
+                        رجوع
+                    </button>
+                </div>
+            </div>
+        </div>
 
-        <div id="create-overlay" onclick="if (event.target === this) this.classList.add('hidden')"
-            class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <!-- 1. قسم إنشاء عهدة جديدة -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 max-w-2xl mx-auto">
+        <!-- 1. قسم إنشاء عهدة جديدة -->
+        <div id="create-overlay" class="hidden fixed inset-0 z-100 flex items-center bg-black/50">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 max-w-2xl w-1/2 mx-auto">
                 <form id="create-custody-form" class="space-y-4">
                     <h2 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
                         <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
                         إعداد وإنشاء حساب عهدة جديدة
                     </h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1">رمز المرجع /
                                 العهدة</label>
-                            <input type="text" id="new-code" required placeholder="مثال: CUST-2026-01"
+                            <input type="text" id="new-id" required placeholder="مثال: CUST-2026-01"
                                 class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
                         </div>
                         <div>
@@ -109,7 +148,7 @@
                     </div>
                     <button type="submit" id="btn-save-custody"
                         class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition">
-                        حفظ في قاعدة البيانات السحابية
+                        إنشاء العهدة
                     </button>
                 </form>
             </div>
@@ -254,12 +293,16 @@
         </div>
     </div>
     <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> -->
     <!-- Export Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- App Scripts -->
+    <script type="module" src="js/script.js"></script>
     <script type="module" src="js/login.js"></script>
     <script type="module" src="js/Custodylist.js"></script>
+    <script type="module" src="js/overlays.js"></script>
+    <!-- <script src="script.js"></script> -->
 </body>
 
 </html>

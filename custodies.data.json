@@ -1,4 +1,0 @@
-[{"id":10,"code":"3","type":"عهدة مشتريات","custody_name":null,"custodian":"سعود","amount":5000.00,"total_amount":0.00,"remaining_amount":5000.00,"created_at":"2026-09-14T08:07:08.700871+00:00","name":null}, 
- {"id":11,"code":"5","type":"عهدة مشتريات","custody_name":null,"custodian":"خالد","amount":2500.00,"total_amount":0.00,"remaining_amount":2500.00,"created_at":"2026-09-14T08:29:17.928806+00:00","name":null}, 
- {"id":12,"code":"8","type":"عهدة تشغيل وصيانة","custody_name":null,"custodian":"تركي","amount":1500.00,"total_amount":0.00,"remaining_amount":1500.00,"created_at":"2026-09-14T11:47:36.160184+00:00","name":null}, 
- {"id":13,"code":"5","type":"عهدة تشغيل وصيانة","custody_name":null,"custodian":"خالد","amount":5000.00,"total_amount":0.00,"remaining_amount":5000.00,"created_at":"2026-09-15T08:05:12.839801+00:00","name":null}]
