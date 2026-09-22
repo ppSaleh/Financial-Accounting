@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { loadCustodyList } from './CustodyList';
+export { supabaseClient };
 const loginForm = document.getElementById('login-form');
 const loginEmail = document.getElementById('login-email');
 const loginPassword = document.getElementById('login-password');
@@ -23,11 +23,11 @@ loginBtn.addEventListener('click', async () => {
     });
     if (error) {
         loginMessage.textContent = 'مشكلة بالتسجيل: ' + error.message;
-        loginMessage.classList = 'text-center p-1 border-2 border-red-400 border-dashed rounded-lg bg-red-50 text-red-600 w-4/5';
+        loginMessage.classList = 'w-full flex justify-center text-center p-1 border-2 border-red-400 border-dashed rounded-lg bg-red-50 text-red-600 w-4/5';
     }
     else {
         loginMessage.textContent = 'تم تسجيل الدخول بنجاح!';
-        loginMessage.classList = 'text-center p-1 border-2 border-green-400 border-dashed rounded-lg bg-emerald-50 text-emerald-600 w-4/5';
+        loginMessage.classList = 'w-full flex justify-center text-center p-1 border-2 border-green-400 border-dashed rounded-lg bg-emerald-50 text-emerald-600 w-4/5';
     }
 });
 loginForm.addEventListener('keydown', (event) => {
@@ -36,8 +36,7 @@ loginForm.addEventListener('keydown', (event) => {
         loginBtn.click();
     }
 });
-async function showApp() {
-    await loadCustodyList();
+function showApp() {
     loginForm.classList.add('hidden');
     listSec.classList.remove('hidden');
 }
