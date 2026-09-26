@@ -1,4 +1,5 @@
 import { supabaseClient } from "./login";
+import { loadCustodies } from "./custodies";
 const overlay = document.getElementById('create-custody-overlay');
 const form = document.getElementById('create-custody-form');
 const message = document.getElementById('create-custody-message');
@@ -26,7 +27,7 @@ cancelBtn.addEventListener('click', () => {
 createBtn.addEventListener('click', async () => {
     const id = idInput.value.trim();
     const custodian = custodianInput.value.trim();
-    const type = typeInput.value;
+    const type = typeInput.value.trim();
     const initialFunding = parseFloat(initialFundingInput.value) ?? 0;
     if (!id || !custodian) {
         showMessage('رمز المرجع والمستلم مطلوبه');
@@ -45,12 +46,21 @@ createBtn.addEventListener('click', async () => {
     }
     const newCustody = await createCustodyWithOpeningTransaction(id, custodian, type, initialFunding);
     if (newCustody) {
-        showMessage('تم إنشاء العهدة');
+        showMessage('تم إنشاء العهدة', false);
+        loadCustodies();
         setTimeout(() => {
-            cancelBtn.click();
+            if (!overlay.matches('hidden'))
+                cancelBtn.click();
+            clearPanel();
         }, 2000);
     }
 });
+function clearPanel() {
+    idInput.value = '';
+    custodianInput.value = '';
+    typeInput.value = '';
+    initialFundingInput.value = '';
+}
 function showMessage(msgContext, isError = true) {
     const classlist = isError ?
         'w-full flex justify-center text-center p-1 border-2 border-red-400 border-dashed rounded-lg bg-red-50 text-red-600 w-4/5' :

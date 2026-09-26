@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { loadCustodies } from './custodies';
 export { supabaseClient };
 const loginForm = document.getElementById('login-form');
 const loginEmail = document.getElementById('login-email');
@@ -39,6 +40,7 @@ loginForm.addEventListener('keydown', (event) => {
 function showApp() {
     loginForm.classList.add('hidden');
     listSec.classList.remove('hidden');
+    loadCustodies();
 }
 function showLogin() {
     loginForm.classList.remove('hidden');
