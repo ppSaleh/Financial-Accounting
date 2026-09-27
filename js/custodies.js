@@ -1,16 +1,21 @@
+import { loadCustody } from "./custodyTransactions";
 import { supabaseClient } from "./login";
-export { loadCustodies };
+export { loadCustodies, custodies, formatDateDDMMYYYY, switchTable };
 let custodies = {};
 const riyalsSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="saudi-riyal" aria-hidden="true" class="lucide lucide-saudi-riyal"><path d="m20 19.5-5.5 1.2"></path><path d="M14.5 4v11.22a1 1 0 0 0 1.242.97L20 15.2"></path><path d="m2.978 19.351 5.549-1.363A2 2 0 0 0 10 16V2"></path><path d="M20 10 4 13.5"></path></svg>';
-const custodyBody = document.getElementById('custody-body');
-async function loadCustodies() {
-    custodies = await fetchAllCustodiesAsRecord();
+const custodiesTable = document.getElementById('custodies-table');
+const custodiesBody = document.getElementById('custody-body');
+const custodyTable = document.getElementById('custody-table');
+async function loadCustodies(forceRefresh = false) {
+    if (Object.keys(custodies).length === 0 || forceRefresh)
+        custodies = await fetchAllCustodiesAsRecord();
     renderCustodies(Object.values(custodies));
+    loadSummary();
 }
 function renderCustodies(custodies) {
-    custodyBody.innerHTML = '';
+    custodiesBody.innerHTML = '';
     if (custodies.length === 0) {
-        custodyBody.innerHTML = 'NO CUSTODIES!';
+        custodiesBody.innerHTML = 'NO CUSTODIES!';
         return;
     }
     const fragment = document.createDocumentFragment();
@@ -34,13 +39,16 @@ function renderCustodies(custodies) {
                             <td class="px-4 py-3 mono text-gray-600 text-xs" dir="ltr">${formatDateDDMMYYYY(custody.created_at)}</td>
                             <td class="px-4 py-3">
                                 <button
-                                    class="cursor-pointer bg-slate-500 text-white text-xs font-semibold px-4 py-1.5 rounded-md hover:bg-slate-600 transition-colors">عرض
+                                    class="custody-btn cursor-pointer bg-slate-500 text-white text-xs font-semibold px-4 py-1.5 rounded-md hover:bg-slate-600 transition-colors">عرض
                                     التفاصيل</button>
                             </td>`;
+        row.querySelector('.custody-btn')?.addEventListener('click', () => {
+            openCustody(custody.id);
+        });
         fragment.appendChild(row);
         order++;
     });
-    custodyBody.appendChild(fragment);
+    custodiesBody.appendChild(fragment);
 }
 function formatDateDDMMYYYY(isoString) {
     const date = new Date(isoString);
@@ -63,4 +71,38 @@ async function fetchAllCustodiesAsRecord() {
         acc[custody.id] = custody;
         return acc;
     }, {});
+}
+const summaryBalance = document.getElementById('sum-balance');
+const summaryTotalDeposit = document.getElementById('sum-deposit');
+const summaryTotalExpense = document.getElementById('sum-expense');
+async function loadSummary() {
+    let summary = await getOverallSummary();
+    if (summary === null) {
+        console.error("unable to get overall summary");
+        return;
+    }
+    summaryBalance.textContent = summary.balance.toString();
+    summaryTotalDeposit.textContent = summary.total_deposit.toString();
+    summaryTotalExpense.textContent = summary.total_expense.toString();
+    summaryBalance.innerHTML += riyalsSVG;
+    summaryTotalDeposit.innerHTML += riyalsSVG;
+    summaryTotalExpense.innerHTML += riyalsSVG;
+}
+async function getOverallSummary() {
+    const { data, error } = await supabaseClient
+        .rpc('get_overall_summary')
+        .single();
+    if (error) {
+        console.error('Failed to fetch overall summary:', error);
+        return null;
+    }
+    return data;
+}
+function switchTable(table) {
+    custodiesTable.classList.toggle('hidden', table !== 'custodies');
+    custodyTable.classList.toggle('hidden', table !== 'custody');
+}
+function openCustody(custodyid) {
+    switchTable('custody');
+    loadCustody(custodies[custodyid]);
 }

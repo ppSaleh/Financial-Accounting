@@ -1,7 +1,6 @@
 import { supabaseClient } from "./login";
 import { loadCustodies } from "./custodies";
 const overlay = document.getElementById('create-custody-overlay');
-const form = document.getElementById('create-custody-form');
 const message = document.getElementById('create-custody-message');
 const createBtn = document.getElementById('create-custody-create');
 const cancelBtn = document.getElementById('create-custody-cancel');
@@ -47,7 +46,7 @@ createBtn.addEventListener('click', async () => {
     const newCustody = await createCustodyWithOpeningTransaction(id, custodian, type, initialFunding);
     if (newCustody) {
         showMessage('تم إنشاء العهدة', false);
-        loadCustodies();
+        loadCustodies(true);
         setTimeout(() => {
             if (!overlay.matches('hidden'))
                 cancelBtn.click();

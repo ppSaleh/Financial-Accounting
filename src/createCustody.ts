@@ -2,7 +2,6 @@ import { supabaseClient } from "./login";
 import { Custody, loadCustodies } from "./custodies";
 
 const overlay = document.getElementById('create-custody-overlay')!;
-const form = document.getElementById('create-custody-form')!;
 const message = document.getElementById('create-custody-message')!;
 
 const createBtn = document.getElementById('create-custody-create')!;
@@ -83,7 +82,7 @@ createBtn.addEventListener('click', async () => {
 
     if (newCustody) {
         showMessage('تم إنشاء العهدة', false);
-        loadCustodies();
+        loadCustodies(true);
         setTimeout(() => {
             if (!overlay.matches('hidden')) cancelBtn.click();
             clearPanel();

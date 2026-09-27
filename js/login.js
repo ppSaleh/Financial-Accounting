@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { loadCustodies } from './custodies';
-export { supabaseClient };
+export { supabaseClient, isSupervisor };
 const loginForm = document.getElementById('login-form');
 const loginEmail = document.getElementById('login-email');
 const loginPassword = document.getElementById('login-password');
