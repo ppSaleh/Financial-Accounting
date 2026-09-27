@@ -1,7 +1,7 @@
 import { custodies, Custody, FinancialSummary, formatDateDDMMYYYY, switchTable } from "./custodies";
 import { isSupervisor, supabaseClient } from "./login";
 
-export { Transaction, loadCustody }
+export { Transaction, loadCustody, activeCustody }
 
 interface Transaction {
     id: string
@@ -15,7 +15,7 @@ interface Transaction {
     running_balance?: number
 }
 
-let custody: Custody;
+let activeCustody: Custody;
 let txns: Transaction[];
 const riyalsSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="saudi-riyal" aria-hidden="true" class="lucide lucide-saudi-riyal"><path d="m20 19.5-5.5 1.2"></path><path d="M14.5 4v11.22a1 1 0 0 0 1.242.97L20 15.2"></path><path d="m2.978 19.351 5.549-1.363A2 2 0 0 0 10 16V2"></path><path d="M20 10 4 13.5"></path></svg>';
 const body = document.getElementById('txn-body')!;
@@ -25,11 +25,12 @@ const summaryTotalExpense = document.getElementById('trans-sum-expense')!;
 const idLabel = document.getElementById('custody-id')!;
 const detailsLabel = document.getElementById('custody-details')!;
 
+const crtForm = document.getElementById('crt-txn-form') as HTMLFormElement
 const returnBtn = document.getElementById('trans-return')!;
 const printBtn = document.getElementById('trans-print-btn')!;
 
 async function loadCustody(importedcustody: Custody) {
-    custody = importedcustody;
+    activeCustody = importedcustody;
     txns = await loadTransactionsForCustody(importedcustody.id);
     await loadMeta(true);
     await renderCustody();
@@ -82,22 +83,24 @@ async function renderCustody() {
 
 async function loadMeta(forceRefresh = false): Promise<void> {
     // id & details
-    idLabel.textContent = custody.id;
-    detailsLabel.textContent = custody.custodian + ' • ' + custody.type
+    idLabel.textContent = activeCustody.id;
+    detailsLabel.textContent = activeCustody.custodian + ' • ' + activeCustody.type
     // Summary section
-    if (custody.summary === undefined || forceRefresh) {
-        const refreshedSummary = await getCustodySummary(custody.id);
+    if (activeCustody.summary === undefined || forceRefresh) {
+        const refreshedSummary = await getCustodySummary(activeCustody.id);
         if (refreshedSummary === null) return;
 
-        custody.summary = refreshedSummary;
+        activeCustody.summary = refreshedSummary;
     }
 
-    summaryBalance.textContent = custody.summary.balance.toString();
-    summaryTotalDeposit.textContent = custody.summary.total_deposit.toString();
-    summaryTotalExpense.textContent = custody.summary.total_expense.toString();
+    summaryBalance.textContent = activeCustody.summary.balance.toString();
+    summaryTotalDeposit.textContent = activeCustody.summary.total_deposit.toString();
+    summaryTotalExpense.textContent = activeCustody.summary.total_expense.toString();
     summaryBalance.innerHTML += riyalsSVG;
     summaryTotalDeposit.innerHTML += riyalsSVG;
     summaryTotalExpense.innerHTML += riyalsSVG;
+
+    crtForm.dataset.availableBalance = activeCustody.summary.balance.toString();
 }
 
 async function loadTransactionsForCustody(custodyId: string, forceRefresh = false): Promise<Transaction[]> {
