@@ -57,6 +57,16 @@ function formatDateDDMMYYYY(isoString) {
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
 }
+export function formatReceiptDate(isoString, language = 'ar') {
+    return new Intl.DateTimeFormat(language === 'ar' ? 'ar' : 'en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        calendar: 'gregory',
+        numberingSystem: 'latn',
+        timeZone: 'UTC',
+    }).format(new Date(isoString));
+}
 async function fetchAllCustodiesAsRecord() {
     const { data, error } = await supabaseClient
         .from('custodies')

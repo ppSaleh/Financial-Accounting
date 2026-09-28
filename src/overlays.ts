@@ -1,5 +1,17 @@
 let mouseDownTarget: EventTarget | null = null;
 
+const imageOverlay = document.getElementById('image-overlay')!;
+document.getElementById('image-overlay-close')?.addEventListener('click', () => {
+  imageOverlay.classList.add('hidden');
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape') return;
+  document.querySelectorAll('.overlay:not(.forced):not(.hidden)').forEach((overlay) => {
+    overlay.classList.add('hidden');
+  });
+});
+
 document.addEventListener("mousedown", (event) => {
   mouseDownTarget = event.target;
 });

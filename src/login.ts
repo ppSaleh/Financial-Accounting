@@ -22,7 +22,6 @@ loginBtn.addEventListener('click', async () => {
         alert('Please fill out the form.');
         return;
     }
-    console.log(email + password);
 
     const { data, error } = await supabaseClient.auth.signInWithPassword({
         email: email,
@@ -167,7 +166,6 @@ changeDisplaynameBtn.addEventListener('click', () => showDisplayNamePrompt());
 // Session & Auth
 async function initSession() {
     const { data: { session } } = await supabaseClient.auth.getSession()
-    console.log(session);
 
     if (session) {
         profile = await fetchProfile(session.user.id)

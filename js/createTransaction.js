@@ -2,6 +2,7 @@ import { activeCustody, loadCustody } from "./custodyTransactions";
 import { supabaseClient } from "./login";
 const form = document.getElementById('crt-txn-form');
 const overlay = document.getElementById('crt-txn-overlay');
+const overlayLayout = document.getElementById('crt-txn-overlay-layout');
 const openButton = document.getElementById('crt-txn-open');
 const typeButtons = Array.from(document.querySelectorAll('.crt-txn-type-button'));
 const typeValue = document.getElementById('crt-txn-type-value');
@@ -22,8 +23,17 @@ const MAX_FILE_SIZE = 6 * 1024 * 1024;
 let selectedFile = null;
 let selectedFileUrl;
 let dragDepth = 0;
+function getTodayDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+dateInput.value = getTodayDate();
 openButton.addEventListener('click', () => {
     overlay.classList.remove('hidden');
+    dateInput.value = getTodayDate();
     descriptionInput.focus();
 });
 function showMessage(text, isSuccess = false) {
@@ -265,4 +275,20 @@ cancelButton.addEventListener('click', () => {
 window.addEventListener('beforeunload', () => {
     if (selectedFileUrl)
         URL.revokeObjectURL(selectedFileUrl);
+});
+let mouseDownTarget = null;
+overlay.addEventListener("mousedown", (event) => {
+    mouseDownTarget = event.target;
+});
+overlay.addEventListener("mouseup", (event) => {
+    const target = event.target;
+    if (event.button === 0 &&
+        target === mouseDownTarget &&
+        target instanceof Element) {
+        if (target.matches(".crt-overlay:not(.forced)"))
+            overlay.classList.add("hidden");
+        if (target.matches(".crt-overlay-sub"))
+            overlay.classList.add("hidden");
+    }
+    mouseDownTarget = null;
 });

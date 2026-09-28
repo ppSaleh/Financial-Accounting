@@ -1,4 +1,4 @@
-import { custodies, Custody, FinancialSummary, formatDateDDMMYYYY, switchTable } from "./custodies";
+import { custodies, Custody, FinancialSummary, formatDateDDMMYYYY, formatReceiptDate, switchTable } from "./custodies";
 import { isSupervisor, supabaseClient } from "./login";
 
 export { Transaction, loadCustody, activeCustody }
@@ -13,11 +13,13 @@ interface Transaction {
     doc_path: string | null
     transaction_date: string
     running_balance?: number
+    receipt_url?: string
 }
 
 let activeCustody: Custody;
 let txns: Transaction[];
-const riyalsSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="saudi-riyal" aria-hidden="true" class="lucide lucide-saudi-riyal"><path d="m20 19.5-5.5 1.2"></path><path d="M14.5 4v11.22a1 1 0 0 0 1.242.97L20 15.2"></path><path d="m2.978 19.351 5.549-1.363A2 2 0 0 0 10 16V2"></path><path d="M20 10 4 13.5"></path></svg>';
+const riyalsSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="saudi-riyal" aria-hidden="true" class="lucide lucide-saudi-riyal"><path d="m20 19.5-5.5 1.2"></path><path d="M14.5 4v11.22a1 1 0 0 0 1.242.97L20 15.2"></path><path d="m2.978 19.351 5.549-1.363A2 2 0 0 0 10 16V2"></path><path d="M20 10 4 13.5"></path></svg>';
+const riyalsSVGsmol = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="saudi-riyal" aria-hidden="true" class="h-3.5 w-3.5 lucide lucide-saudi-riyal"><path d="m20 19.5-5.5 1.2"></path><path d="M14.5 4v11.22a1 1 0 0 0 1.242.97L20 15.2"></path><path d="m2.978 19.351 5.549-1.363A2 2 0 0 0 10 16V2"></path><path d="M20 10 4 13.5"></path></svg>';
 const body = document.getElementById('txn-body')!;
 const summaryBalance = document.getElementById('trans-sum-balance')!;
 const summaryTotalDeposit = document.getElementById('trans-sum-deposit')!;
@@ -41,16 +43,17 @@ async function renderCustody() {
         body.innerHTML = 'NO TRANSACTIONS';
         return;
     }
-    
+    const receiptPaths: string[] = []
     const fragment = document.createDocumentFragment();
     let order = 1;
     txns.forEach(txn => {
+        if (txn.doc_path !== null) receiptPaths.push(txn.doc_path)
         const row = document.createElement('tr');
         const fileCol = txn.doc_path === null ? '—' : `<button
-                                    class="cursor-pointer bg-slate-500 hover:bg-slate-400 text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">
+                                    class="view-img cursor-pointer bg-slate-500 hover:bg-slate-400 text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">
                                     عرض</button>
                                 <button
-                                    class="cursor-pointer bg-[#659095] hover:bg-[#83A6AA] text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">
+                                    class="download-img cursor-pointer bg-[#659095] hover:bg-[#83A6AA] text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">
                                     تحميل</button>`;
         const buttonCol = isSupervisor() ? ` <button
                                     class="cursor-pointer bg-[#B37073] hover:bg-[#C79497] text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">
@@ -75,10 +78,14 @@ async function renderCustody() {
                             </td>
                             <td class="px-4 py-3">${buttonCol}</td>
                         </tr>`;
+        row.querySelector('.view-img')?.addEventListener('click', () => viewReceipt(txn))
+        row.querySelector('.download-img')?.addEventListener('click', () => downloadReceipt(txn))
         order++;
         fragment.appendChild(row);
     })
     body.append(fragment);
+
+    loadRecipts();
 }
 
 async function loadMeta(forceRefresh = false): Promise<void> {
@@ -145,35 +152,112 @@ async function fetchTransactions(custodyId: string): Promise<Transaction[]> {
     return data
 }
 
+async function getSignedUrlsForPaths(paths: string[]): Promise<Record<string, string>> {
+    if (paths.length === 0) return {}
+
+    const { data, error } = await supabaseClient.storage
+        .from('receipts')
+        .createSignedUrls(paths, 3600) // 1 hour, matches getReceiptUrl's expiry
+
+    if (error) {
+        console.error('Failed to get signed URLs:', error)
+        return {}
+    }
+
+    const map: Record<string, string> = {}
+    for (const item of data) {
+        if (item.signedUrl && !item.error) {
+            map[item.path!] = item.signedUrl
+        } else {
+            console.error(`Failed to sign ${item.path}:`, item.error)
+        }
+    }
+    return map
+}
+
+async function downloadReceipt(t: Transaction): Promise<void> {
+    if (!t.receipt_url || !t.doc_path) {
+        console.log('nuh uh')
+        return;
+    }
+    console.log('clicked');
+
+    const res = await fetch(t.receipt_url)
+    const blob = await res.blob()
+    const objectUrl = URL.createObjectURL(blob)
+
+    const a = document.createElement('a')
+    a.href = objectUrl
+    a.download = t.doc_path.split('/').pop() ?? 'receipt'
+    a.click()
+
+    URL.revokeObjectURL(objectUrl)
+}
+const imageOverlay = document.getElementById('image-overlay')!;
+const imageSrc = document.getElementById('image-src') as HTMLImageElement;
+async function viewReceipt(t: Transaction): Promise<void> {
+    imageOverlay.classList.remove('hidden');
+    imageSrc.src = t.receipt_url ?? '';
+}
+
+const receiptsTable = document.getElementById('custody-attachments-table')!;
+const receiptsArea = document.getElementById('custody-attachments')!;
+async function loadRecipts() {
+    await attachReceiptUrls();
+    const txnsReceipts = txns
+        .filter(t => t.doc_path !== null);
+    if (txnsReceipts.length === 0) {
+        receiptsTable.classList.add('hidden');
+        return;
+    }
+    console.log(txnsReceipts);
+    let receiptsArray: string[] = [];
+    txnsReceipts.forEach(txn => {
+        const isExpense = txn.expense !== 0;
+        const amountspan = `<span class="flex shrink-0 items-center gap-1 text-xs font-medium text-${isExpense ? '[#B37073]' : 'emerald-800'}">${isExpense ? txn.expense : txn.deposit}${riyalsSVGsmol}</span>`;
+        let cell: string = `<div class="flex min-w-0 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white">
+                            <img class="h-56 w-full bg-gray-50 object-contain p-3" src="${txn.receipt_url}">
+                            <div class="space-y-2 border-t border-gray-100 px-3 py-3 text-right">
+                                <span class="block truncate text-sm font-semibold text-gray-700" dir="auto">${txn.description}</span>
+                                <div class="flex items-center justify-between gap-2">
+                                    <time datetime="${txn.transaction_date}" dir="ltr" class="text-xs font-normal text-gray-500">${formatReceiptDate(txn.transaction_date)}</time>
+                                    ${amountspan}
+                                </div>
+                            </div>
+                        </div>`;
+        receiptsArray.push(cell);
+    })
+    receiptsArea.innerHTML = receiptsArray.join('\n');
+    receiptsTable.classList.remove('hidden');
+}
+
+async function attachReceiptUrls(): Promise<void> {
+    const paths = txns
+        .filter(t => t.doc_path !== null)
+        .map(t => t.doc_path as string)
+
+    if (paths.length === 0) return
+
+    const { data, error } = await supabaseClient.storage
+        .from('receipts')
+        .createSignedUrls(paths, 3600)
+
+    if (error) {
+        console.error('Failed to sign receipt URLs:', error)
+        return
+    }
+
+    const urlByPath: Record<string, string> = {}
+    for (const item of data) {
+        if (item.signedUrl && item.path) urlByPath[item.path] = item.signedUrl
+    }
+
+    for (const t of txns) {
+        t.receipt_url = t.doc_path ? (urlByPath[t.doc_path] ?? undefined) : undefined
+    }
+}
+
+
 returnBtn.addEventListener('click', () => {
     switchTable('custodies')
 })
-
-/*async function createTransaction(payload: CustodyTransactionInsert): Promise<CustodyTransaction | null> {
-  const { data, error } = await supabaseClient
-    .from('custody_transactions')
-    .insert(payload)
-    .select('id, created_at, custody_id, description, deposit, expense, doc_path, transaction_date')
-    .single<CustodyTransaction>()
-
-  if (error) {
-    console.error('Failed to create transaction:', error)
-    return null
-  }
-
-  await loadTransactionsForCustody(data.custody_id) // refresh the list
-  delete summaryCache[data.custody_id] // invalidate summary too, if you're using that
-  return data
-}
-
-async function getCustodySummaryCached(custodyId: string, force = false): Promise<FinancialSummary | null> {
-    if (!force && summaryCache[custodyId]) {
-        return summaryCache[custodyId]
-    }
-
-    const summary = await getCustodySummary(custodyId)
-    if (summary) {
-        summaryCache[custodyId] = summary
-    }
-    return summary
-}*/
