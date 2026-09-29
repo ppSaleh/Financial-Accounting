@@ -85,17 +85,18 @@
         <div id="app">
 
             <!-- Table -->
-            <div id="custodies-table" class="overflow-x-auto rounded-2xl border border-gray-200">
+            <div id="custodies-table" class="hidden overflow-x-auto rounded-2xl border border-gray-200">
                 <table class="w-full text-sm border-collapse text-center">
                     <!-- Table Card -->
                     <div class="bg-white overflow-hidden pl-2 pr-2 pb-3 border-b border-gray-200">
-                        <div class="flex items-center justify-between">
+                        <div class="flex flex-wrap items-center justify-between">
                             <!-- Header -->
                             <div class="p-6">
                                 <h1 class="text-3xl font-semibold text-gray-800">سجل العهد المالية</h1>
                                 <p class="text-l text-gray-500 mt-0.5">إدارة العُهد المالية ومتابعة أرصدتها
                                 </p>
                             </div>
+
 
                             <div class="min-w-[600px] bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
                                 <div class="flex">
@@ -178,18 +179,18 @@
                     </tbody>
                 </table>
             </div>
-            <div id="custody-table" class="hidden flex flex-col gap-4">
+            <div id="custody-table" class="flex flex-col gap-4">
                 <div class="overflow-x-auto rounded-2xl border border-gray-200">
                     <table class="w-full text-sm border-collapse text-center">
                         <!-- Table Card -->
                         <div class="bg-white overflow-hidden px-2 pb-3 border-b border-gray-200">
-                            <div class="flex items-center justify-between">
+                            <div class="flex flex-wrap items-center justify-between">
                                 <!-- Header -->
                                 <div class="p-6 min-w-[400px]">
                                     <div class="flex items-center gap-2">
                                         <h1 class="text-2xl font-semibold text-gray-800">تفاصيل العهدة:</h1>
                                         <h1 id="custody-id"
-                                            class="bg-slate-300/60 border border-slate-500 rounded-lg py-0.5 px-2 text-xl font-semibold text-slate-700">
+                                            class="text-xl font-semibold text-slate-600">
                                             FRT-2026-001</h1>
                                     </div>
                                     <p id="custody-details" class="text-gray-700 mt-0.5">صالح عبدالله محمد - عهدة
@@ -201,27 +202,27 @@
                                     <div class="flex">
                                         <div class="flex-1 min-w-0 px-5 py-4 text-right">
                                             <p class="text-sm text-gray-500 mb-1.5">الرصيد المتبقي</p>
-                                            <p id="trans-sum-balance"
+                                            <p id="txn-sum-balance"
                                                 class="text-2xl font-extrabold text-gray-600 mono leading-none flex gap-2 items-center">
-                                                43,200.00
+                                                0.00
                                                 <i width="18px" data-lucide="saudi-riyal"></i>
                                             </p>
                                         </div>
                                         <div class="w-px bg-gray-200 self-stretch"></div>
                                         <div class="flex-1 min-w-0 px-5 py-4 text-right">
                                             <p class="text-sm text-gray-500 mb-1">إجمالي المدين (القبض)</p>
-                                            <p id="trans-sum-deposit"
+                                            <p id="txn-sum-deposit"
                                                 class="text-xl font-bold text-green-600 mono flex gap-2 items-center">
-                                                43,000.00
+                                                0.00
                                                 <i width="18px" data-lucide="saudi-riyal"></i>
                                             </p>
                                         </div>
                                         <div class="w-px bg-gray-200 self-stretch"></div>
                                         <div class="flex-1 min-w-0 px-5 py-4 text-right">
                                             <p class="text-sm text-gray-500 mb-1">إجمالي الدائن (الصرف)</p>
-                                            <p id="trans-sum-expense"
+                                            <p id="txn-sum-expense"
                                                 class="text-xl font-bold text-[#fe3614] mono  flex gap-2 items-center">
-                                                18,800.00
+                                                0.00
                                                 <i width="18px" data-lucide="saudi-riyal"></i>
                                             </p>
                                         </div>
@@ -231,20 +232,24 @@
 
                             <div class="flex w-full justify-between items-center gap-2.5 h-8 p-3">
                                 <div class="flex gap-2.5 items-center">
-                                    <button id="trans-return"
+                                    <button id="txn-return"
                                         class="bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer">
                                         <i class="w-5 h-5 m-0" data-lucide="square-arrow-right-exit"></i>
                                         <span>رجوع</span></button>
                                     <h2 class="text-xl font-semibold text-gray-800">حركات العهدة</h2>
                                 </div>
 
-                                <div class="flex gap-2.5 items-center">
-                                    <button id="trans-print-btn"
+                                <div class="flex gap-1.5 items-center">
+                                    <button id="txn-print-btn"
                                         class="bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer">
                                         <i class="w-5 h-5 m-0" data-lucide="printer"></i>
                                         <span>طباعة</span>
                                     </button>
-                                    <div class="w-px h-5 bg-slate-200 flex-shrink-0"></div>
+                                    <div class="w-px h-5 mx-1 bg-slate-200 flex-shrink-0"></div>
+                                    <button id="txn-edit"
+                                        class="bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer">
+                                        <i class="w-5 h-5 m-0" data-lucide="edit"></i>
+                                        <span>تعديل</span></button>
                                     <button id="crt-txn-open"
                                         class="bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer">
                                         <i class="w-5 h-5 m-0" data-lucide="plus"></i>
@@ -254,13 +259,13 @@
                             </div>
                         </div>
                         <thead class="bg-gray-50">
-                            <tr>
+                            <tr id="custody-table-head">
                                 <th
                                     class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
                                     #</th>
                                 <th
                                     class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                    تاريخ الإنشاء</th>
+                                    تاريخ الفاتورة</th>
                                 <th
                                     class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
                                     البيان</th>
@@ -276,9 +281,6 @@
                                 <th
                                     class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
                                     الرصيد</th>
-                                <th
-                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                    الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="txn-body" class="bg-white">
@@ -289,24 +291,16 @@
                                 <td class="px-4 py-3 mono font-semibold text-gray-500">رصيد أول المدة</td>
                                 <td class="px-4 py-3 text-gray-400">—</td>
                                 <td class="px-4 py-3 mono text-left font-bold text-emerald-600">
-                                    <span class="flex items-center justify-end gap-1">15,000.00<i width="16px"
+                                    <span class="flex items-center justify-end gap-1">0.00<i width="16px"
                                             data-lucide="saudi-riyal"></i></span>
                                 </td>
                                 <td class="px-4 py-3 mono text-left font-bold text-[#B37073]">
-                                    <span class="flex items-center justify-end gap-1">15,000.00<i width="16px"
+                                    <span class="flex items-center justify-end gap-1">0.00<i width="16px"
                                             data-lucide="saudi-riyal"></i></span>
                                 </td>
-                                <td class="px-4 py-3 mono text-left font-bold text-[#76797D]">
-                                    <span class="flex items-center justify-end gap-1">8,200.00<i width="16px"
+                                <td class="px-4 py-3  mono text-left font-bold text-[#76797D]">
+                                    <span class="flex items-center justify-end gap-1">0.00<i width="16px"
                                             data-lucide="saudi-riyal"></i></span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <button
-                                        class="cursor-pointer bg-[#B37073] hover:bg-[#C79497] text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">
-                                        حذف</button>
-                                    <button
-                                        class="cursor-pointer bg-slate-500 text-white text-xs font-semibold px-4 py-1.5 rounded-md hover:bg-slate-400 transition-colors">
-                                        تعديل</button>
                                 </td>
                             </tr>
 
@@ -335,11 +329,6 @@
                                     <span class="flex items-center justify-end gap-1">4,800.00<i width="16px"
                                             data-lucide="saudi-riyal"></i></span>
                                 </td>
-                                <td class="px-4 py-3">
-                                    <button
-                                        class="cursor-pointer bg-slate-500 text-white text-xs font-semibold px-4 py-1.5 rounded-md hover:bg-slate-600 transition-colors">عرض
-                                        التفاصيل</button>
-                                </td>
                             </tr>
 
                             <!-- Row 3 -->
@@ -359,11 +348,6 @@
                                 <td class="px-4 py-3 mono text-left font-bold text-gray-600">
                                     <span class="flex items-center justify-end gap-1">11,200.00<i width="16px"
                                             data-lucide="saudi-riyal"></i></span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <button
-                                        class="cursor-pointer bg-slate-500 text-white text-xs font-semibold px-4 py-1.5 rounded-md hover:bg-slate-600 transition-colors">عرض
-                                        التفاصيل</button>
                                 </td>
                             </tr>
 
@@ -592,7 +576,7 @@
                 class="flex w-full max-w-2xl flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-2xl sm:p-6">
                 <h1 id="crt-txn-title" class="m-0 flex items-center gap-2 text-base font-bold text-gray-800">
                     <span class="size-3 rounded-full bg-emerald-500" aria-hidden="true"></span>
-                    إنشاء فاتورة جديدة
+                    <span id="crt-txn-title-label">إنشاء فاتورة جديدة</span>
                 </h1>
 
                 <div id="crt-txn-fields" class="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
@@ -644,7 +628,7 @@
                         <div id="crt-txn-amount-shell"
                             class="flex h-11 items-center rounded-lg border border-gray-300 px-3 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/25">
                             <input id="crt-txn-amount" class="h-full min-w-0 flex-1 bg-transparent text-sm outline-none"
-                                name="amount" type="number" min="0" step="100" required placeholder="0.00" />
+                                name="amount" type="number" min="0.01" step="0.01" required placeholder="0.00" />
                         </div>
                     </div>
 
@@ -699,7 +683,8 @@
         </div>
     </div>
     <!-- عرض الصور -->
-    <div id="image-overlay" class="hidden overlay fixed inset-0 z-100 flex items-center justify-center bg-slate-950/70 p-3 backdrop-blur-sm sm:p-6">
+    <div id="image-overlay"
+        class="hidden overlay fixed inset-0 z-100 flex items-center justify-center bg-slate-950/70 p-3 backdrop-blur-sm sm:p-6">
         <div role="dialog" aria-modal="true" aria-labelledby="image-overlay-title"
             class="flex max-h-[calc(100dvh-3rem)] max-w-full flex-col overflow-hidden rounded-2xl border border-white/15 bg-white shadow-2xl">
             <div class="flex shrink-0 items-center justify-between gap-6 border-b border-gray-200 px-4 py-3">
@@ -714,8 +699,36 @@
                 </button>
             </div>
             <div class="flex min-h-0 items-center justify-center overflow-auto bg-slate-100 p-3 sm:p-5">
-                <img id="image-src" class="block h-auto max-h-[min(560px,calc(100dvh-10rem))] w-auto max-w-[min(640px,100%)] rounded-sm object-contain shadow-sm"
+                <img id="image-src"
+                    class="block h-auto max-h-[min(560px,calc(100dvh-10rem))] w-auto max-w-[min(640px,100%)] rounded-sm object-contain shadow-sm"
                     alt="صورة الفاتورة المرفقة">
+            </div>
+        </div>
+    </div>
+    <!-- تأكيد -->
+    <div id="confirm-overlay"
+        class="hidden overlay fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/70 p-3 backdrop-blur-sm sm:p-6">
+        <div role="dialog" aria-modal="true" aria-labelledby="confirm-overlay-title" aria-describedby="confirm-overlay-message"
+            class="flex w-full max-w-md flex-col overflow-hidden rounded-2xl border border-white/15 bg-white shadow-2xl">
+            <div class="flex shrink-0 items-center justify-between gap-6 border-b border-gray-200 px-4 py-3">
+                <h2 id="confirm-overlay-title" class="flex items-center gap-2 text-sm font-semibold text-gray-800">
+                    <i data-lucide="circle-alert" class="h-4 w-4 shrink-0 text-gray-700"></i>
+                    هل انت متأكد؟
+                </h2>
+                <button id="confirm-overlay-close"
+                    class="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                    type="button" aria-label="إلغاء">
+                    <i data-lucide="x" class="h-5 w-5"></i>
+                </button>
+            </div>
+            <div class="space-y-5 p-5">
+                <p id="confirm-overlay-message" class="break-words text-sm text-gray-600"></p>
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="confirm-overlay-confirm" type="button"
+                        class="min-h-11 cursor-pointer rounded-lg bg-[#B37073] px-4 text-sm font-semibold text-white hover:bg-[#C79497]">تأكيد</button>
+                    <button id="confirm-overlay-cancel" type="button"
+                        class="min-h-11 cursor-pointer rounded-lg bg-gray-100 px-4 text-sm font-semibold text-gray-700 hover:bg-gray-200">إلغاء</button>
+                </div>
             </div>
         </div>
     </div>

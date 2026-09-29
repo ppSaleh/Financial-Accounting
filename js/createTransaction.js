@@ -18,11 +18,16 @@ const cancelButton = document.getElementById('crt-txn-cancel');
 const message = document.getElementById('crt-txn-message');
 const descriptionInput = document.getElementById('crt-txn-description');
 const dateInput = document.getElementById('crt-txn-date');
+const titleLabel = document.getElementById('crt-txn-title-label');
+const submitButton = document.getElementById('crt-txn-action');
 const MIN_AMOUNT = 0.01;
 const MAX_FILE_SIZE = 6 * 1024 * 1024;
 let selectedFile = null;
 let selectedFileUrl;
 let dragDepth = 0;
+let editingTransaction = null;
+let removeReceipt = false;
+let isSaving = false;
 function getTodayDate() {
     const today = new Date();
     const year = today.getFullYear();
@@ -32,10 +37,49 @@ function getTodayDate() {
 }
 dateInput.value = getTodayDate();
 openButton.addEventListener('click', () => {
+    if (isSaving)
+        return;
+    resetForm();
     overlay.classList.remove('hidden');
     dateInput.value = getTodayDate();
     descriptionInput.focus();
 });
+export function openEdit(txn) {
+    if (isSaving)
+        return;
+    resetForm();
+    editingTransaction = txn;
+    titleLabel.textContent = 'تعديل الفاتورة';
+    submitButton.textContent = 'حفظ التعديلات';
+    overlay.classList.remove('hidden');
+    descriptionInput.value = txn.description;
+    dateInput.value = txn.transaction_date;
+    amountInput.value = String(txn.expense || txn.deposit);
+    setTransactionType(txn.expense > 0 ? 'صرف' : 'قبض');
+    updateFileDisplay();
+    descriptionInput.focus();
+}
+function resetForm() {
+    editingTransaction = null;
+    removeReceipt = false;
+    form.reset();
+    clearSelectedFile();
+    showMessage('');
+    titleLabel.textContent = 'إنشاء فاتورة جديدة';
+    submitButton.textContent = 'إنشاء الفاتورة';
+    dateInput.value = getTodayDate();
+    setTransactionType('صرف');
+}
+function getAvailableBalance() {
+    if (!form.dataset.availableBalance)
+        return null;
+    const balance = Number(form.dataset.availableBalance);
+    if (!Number.isFinite(balance))
+        return null;
+    // Remove the original transaction's effect before applying its replacement.
+    return Number((balance + (editingTransaction?.expense ?? 0) -
+        (editingTransaction?.deposit ?? 0)).toFixed(2));
+}
 function showMessage(text, isSuccess = false) {
     message.textContent = text;
     message.classList.toggle('hidden', !text);
@@ -73,8 +117,8 @@ function setTransactionType(type) {
     });
     const isExpense = type === 'صرف';
     amountLabel.textContent = isExpense ? 'المبلغ المصروف (دائن)' : 'المبلغ المقبوض (مدين)';
-    const availableBalance = Number(form.dataset.availableBalance);
-    if (isExpense && form.dataset.availableBalance && Number.isFinite(availableBalance)) {
+    const availableBalance = getAvailableBalance();
+    if (isExpense && availableBalance !== null) {
         amountInput.max = String(availableBalance);
     }
     else {
@@ -84,13 +128,18 @@ function setTransactionType(type) {
 function clearSelectedFile() {
     selectedFile = null;
     fileInput.value = '';
-    fileName.textContent = 'لم يتم اختيار ملف';
-    fileActions.classList.add('hidden');
-    fileActions.classList.remove('flex');
+    updateFileDisplay();
     if (selectedFileUrl) {
         URL.revokeObjectURL(selectedFileUrl);
         selectedFileUrl = undefined;
     }
+}
+function updateFileDisplay() {
+    const currentPath = removeReceipt ? null : editingTransaction?.doc_path;
+    const name = selectedFile?.name ?? currentPath?.split('/').pop();
+    fileName.textContent = name || 'لم يتم اختيار ملف';
+    fileActions.classList.toggle('hidden', !name);
+    fileActions.classList.toggle('flex', Boolean(name));
 }
 function selectFile(file) {
     showMessage('');
@@ -108,10 +157,9 @@ function selectFile(file) {
         showMessage('حجم الملف يجب ألا يتجاوز 6 ميجابايت');
         return;
     }
+    clearSelectedFile();
     selectedFile = file;
-    fileName.textContent = file.name;
-    fileActions.classList.remove('hidden');
-    fileActions.classList.add('flex');
+    updateFileDisplay();
 }
 typeButtons.forEach((button) => {
     button.addEventListener('click', () => {
@@ -123,12 +171,17 @@ fileInput.addEventListener('change', () => {
     selectFile(fileInput.files && fileInput.files[0]);
 });
 clearFileButton.addEventListener('click', () => {
+    removeReceipt = true;
     clearSelectedFile();
     fileInput.focus();
 });
 viewFileButton.addEventListener('click', () => {
-    if (!selectedFile)
+    if (!selectedFile) {
+        const receiptUrl = removeReceipt ? undefined : editingTransaction?.receipt_url;
+        if (receiptUrl)
+            window.open(receiptUrl, '_blank', 'noopener,noreferrer');
         return;
+    }
     if (selectedFileUrl)
         URL.revokeObjectURL(selectedFileUrl);
     selectedFileUrl = URL.createObjectURL(selectedFile);
@@ -169,22 +222,24 @@ dropZone.addEventListener('drop', (event) => {
 });
 form.addEventListener('submit', async (event) => {
     event.preventDefault();
+    if (isSaving)
+        return;
     showMessage('');
+    setTransactionType(typeValue.value);
     if (!form.checkValidity()) {
         form.reportValidity();
         return;
     }
     const amount = Number(amountInput.value);
-    const availableBalance = Number(form.dataset.availableBalance);
+    const availableBalance = getAvailableBalance();
     if (!Number.isFinite(amount) || amount < MIN_AMOUNT) {
         showMessage('يجب أن يكون المبلغ 0.01 أو أكثر');
         return;
     }
-    if (typeValue.value === 'صرف' &&
-        form.dataset.availableBalance &&
-        Number.isFinite(availableBalance) &&
-        amount > availableBalance) {
-        showMessage('لا يمكن أن يتجاوز مبلغ الصرف الرصيد المتاح');
+    if (availableBalance !== null &&
+        Math.round(availableBalance * 100) +
+            (typeValue.value === 'صرف' ? -1 : 1) * Math.round(amount * 100) < 0) {
+        showMessage('لا يمكن حفظ الفاتورة لأن الرصيد الناتج سيكون سالباً');
         return;
     }
     const date = dateInput.value;
@@ -204,25 +259,45 @@ form.addEventListener('submit', async (event) => {
         amount,
         file: selectedFile,
     };
-    form.dispatchEvent(new CustomEvent('crt-txn-create', {
-        bubbles: true,
-        detail,
-    }));
-    showMessage('يتم إنشاء الفاتورة', true);
-    const success = await createTransactionWithReceipt({
-        custody_id: activeCustody.id,
+    const txn = editingTransaction;
+    const custody = activeCustody;
+    const params = {
         description,
         deposit: typeValue.value === 'قبض' ? amount : 0,
         expense: typeValue.value === 'صرف' ? amount : 0,
-        transaction_date: new Date().toISOString().split('T')[0],
-        file: selectedFile ?? undefined,
-    });
-    if (success) {
-        showMessage('تم إنشاء الفاتورة بنجاح', true);
-        activeCustody.summary = undefined;
-        activeCustody.transactions = undefined;
-        await loadCustody(activeCustody);
+        transaction_date: date,
+    };
+    isSaving = true;
+    submitButton.disabled = true;
+    form.inert = true;
+    try {
+        form.dispatchEvent(new CustomEvent(txn ? 'crt-txn-edit' : 'crt-txn-create', {
+            bubbles: true,
+            detail: txn ? { ...detail, id: txn.id } : detail,
+        }));
+        showMessage(txn ? 'يتم حفظ التعديلات' : 'يتم إنشاء الفاتورة', true);
+        const success = txn
+            ? await editTransaction({ ...params, id: txn.id, currentDocPath: txn.doc_path,
+                newFile: selectedFile ?? undefined, removeReceipt })
+            : await createTransactionWithReceipt({ ...params, custody_id: custody.id,
+                file: selectedFile ?? undefined });
+        if (!success)
+            return;
+        custody.summary = undefined;
+        custody.transactions = undefined;
+        // The write is complete; close before refreshing so it cannot be submitted again.
         overlay.classList.add('hidden');
+        resetForm();
+        await loadCustody(custody);
+    }
+    catch (error) {
+        console.error('Failed to save or refresh transaction:', error);
+        showMessage('حدث خطأ أثناء الحفظ أو تحديث القائمة، يرجى التحقق من القائمة قبل إعادة المحاولة');
+    }
+    finally {
+        isSaving = false;
+        submitButton.disabled = false;
+        form.inert = false;
     }
 });
 async function createTransactionWithReceipt(params) {
@@ -268,8 +343,57 @@ async function uploadReceipt(file) {
     }
     return path;
 }
+async function editTransaction(params) {
+    let newDocPath = params.currentDocPath;
+    if (params.newFile) {
+        const uploaded = await uploadReceipt(params.newFile);
+        if (uploaded === null) {
+            console.error('New receipt upload failed, aborting edit');
+            return false;
+        }
+        newDocPath = uploaded;
+    }
+    else if (params.removeReceipt) {
+        newDocPath = null;
+    }
+    const { error } = await supabaseClient
+        .from('custody_transactions')
+        .update({
+        description: params.description,
+        deposit: params.deposit,
+        expense: params.expense,
+        transaction_date: params.transaction_date,
+        doc_path: newDocPath,
+    })
+        .eq('id', params.id)
+        .select('id')
+        .single();
+    if (error) {
+        showMessage('تعذر تعديل الفاتورة: ' + error.message);
+        console.error('Failed to update transaction:', error);
+        // roll back the new upload if the DB update failed, so it doesn't orphan
+        if (params.newFile && newDocPath) {
+            await supabaseClient.storage.from('receipts').remove([newDocPath]);
+        }
+        return false;
+    }
+    // update succeeded — clean up the OLD file if it was replaced or removed
+    const oldPathNoLongerUsed = params.currentDocPath !== null && params.currentDocPath !== newDocPath;
+    if (oldPathNoLongerUsed) {
+        const { error: storageError } = await supabaseClient.storage
+            .from('receipts')
+            .remove([params.currentDocPath]);
+        if (storageError) {
+            console.error('Old receipt cleanup failed (non-fatal):', storageError);
+        }
+    }
+    return true;
+}
 cancelButton.addEventListener('click', () => {
+    if (isSaving)
+        return;
     overlay.classList.add('hidden');
+    resetForm();
     form.dispatchEvent(new CustomEvent('crt-txn-cancel', { bubbles: true }));
 });
 window.addEventListener('beforeunload', () => {
@@ -281,6 +405,8 @@ overlay.addEventListener("mousedown", (event) => {
     mouseDownTarget = event.target;
 });
 overlay.addEventListener("mouseup", (event) => {
+    if (isSaving)
+        return;
     const target = event.target;
     if (event.button === 0 &&
         target === mouseDownTarget &&
