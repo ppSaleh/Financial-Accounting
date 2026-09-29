@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BX80bFGj.js";var t;e((()=>{t=`/assets/pdf.worker.min-Dswkl-cV.mjs`}))();export{t as default};

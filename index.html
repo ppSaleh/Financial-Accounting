@@ -183,14 +183,13 @@
                 <div class="overflow-x-auto rounded-2xl border border-gray-200">
                     <table class="w-full text-sm border-collapse text-center">
                         <!-- Table Card -->
-                        <div class="bg-white overflow-hidden px-2 pb-3 border-b border-gray-200">
+                        <div class="relative z-20 bg-white px-2 pb-3 border-b border-gray-200">
                             <div class="flex flex-wrap items-center justify-between">
                                 <!-- Header -->
                                 <div class="p-6 min-w-[400px]">
                                     <div class="flex items-center gap-2">
                                         <h1 class="text-2xl font-semibold text-gray-800">تفاصيل العهدة:</h1>
-                                        <h1 id="custody-id"
-                                            class="text-xl font-semibold text-slate-600">
+                                        <h1 id="custody-id" class="text-xl font-semibold text-slate-600">
                                             FRT-2026-001</h1>
                                     </div>
                                     <p id="custody-details" class="text-gray-700 mt-0.5">صالح عبدالله محمد - عهدة
@@ -240,11 +239,24 @@
                                 </div>
 
                                 <div class="flex gap-1.5 items-center">
-                                    <button id="txn-print-btn"
+                                    <div id="txn-print-menu" class="relative w-fit">
+                                    <button id="txn-print-btn" type="button" aria-expanded="false" aria-controls="txn-print-options"
                                         class="bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer">
                                         <i class="w-5 h-5 m-0" data-lucide="printer"></i>
                                         <span>طباعة</span>
                                     </button>
+                                    <div id="txn-print-options" inert class="absolute left-0 top-full z-50 mt-1 w-24 bg-[#4E5D72] text-white text-sm font-semibold rounded-md shadow-lg flex flex-col whitespace-nowrap
+                                        opacity-0 -translate-y-2 pointer-events-none transition-[opacity,transform] duration-200 ease-out">
+                                        <button id="txn-print-pdf" type="button" class="flex items-center gap-2 p-3 rounded-md hover:bg-[#6C788A] focus-visible:bg-[#6C788A] transition-colors cursor-pointer">
+                                            <i data-lucide="printer" class="w-5 h-5"></i>
+                                            <span>PDF</span>
+                                        </button>
+                                        <button id="txn-print-csv" type="button" class="flex items-center gap-2 p-3 rounded-md hover:bg-[#6C788A] focus-visible:bg-[#6C788A] transition-colors cursor-pointer">
+                                            <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+                                            <span>CSV</span>
+                                        </button>
+                                    </div>
+                                    </div>
                                     <div class="w-px h-5 mx-1 bg-slate-200 flex-shrink-0"></div>
                                     <button id="txn-edit"
                                         class="bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer">
@@ -708,7 +720,8 @@
     <!-- تأكيد -->
     <div id="confirm-overlay"
         class="hidden overlay fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/70 p-3 backdrop-blur-sm sm:p-6">
-        <div role="dialog" aria-modal="true" aria-labelledby="confirm-overlay-title" aria-describedby="confirm-overlay-message"
+        <div role="dialog" aria-modal="true" aria-labelledby="confirm-overlay-title"
+            aria-describedby="confirm-overlay-message"
             class="flex w-full max-w-md flex-col overflow-hidden rounded-2xl border border-white/15 bg-white shadow-2xl">
             <div class="flex shrink-0 items-center justify-between gap-6 border-b border-gray-200 px-4 py-3">
                 <h2 id="confirm-overlay-title" class="flex items-center gap-2 text-sm font-semibold text-gray-800">
@@ -737,6 +750,9 @@
     <!-- Export Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Arabic font -->
+    <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.2.12/build/pdfmake.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.2.12/build/vfs_fonts.js"></script>
     <!-- App Scripts -->
     <script type="module" src="js/script.js"></script>
     <script type="module" src="js/login.js"></script>

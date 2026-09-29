@@ -25,6 +25,8 @@ async function loadCustody(importedcustody) {
 }
 async function renderCustody() {
     body.innerHTML = '';
+    receiptsArea.replaceChildren();
+    receiptsTable.classList.add('hidden');
     if (txns.length === 0) {
         body.innerHTML = 'NO TRANSACTIONS';
         return;
@@ -148,43 +150,92 @@ async function getSignedUrlsForPaths(paths) {
     return map;
 }
 async function downloadReceipt(t) {
-    if (!t.receipt_url || !t.doc_path) {
-        console.log('nuh uh');
+    if (!t.doc_path)
         return;
+    try {
+        // Download the original file, never the PDF's page-one preview.
+        const { data, error } = await supabaseClient.storage.from('receipts').download(t.doc_path);
+        if (error)
+            throw error;
+        const objectUrl = URL.createObjectURL(data);
+        const a = document.createElement('a');
+        a.href = objectUrl;
+        a.download = t.doc_path.split('/').pop() || 'receipt';
+        document.body.append(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
     }
-    console.log('clicked');
-    const res = await fetch(t.receipt_url);
-    const blob = await res.blob();
-    const objectUrl = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = objectUrl;
-    a.download = t.doc_path.split('/').pop() ?? 'receipt';
-    a.click();
-    URL.revokeObjectURL(objectUrl);
+    catch (error) {
+        console.error('Failed to download receipt:', error);
+        alert('تعذر تحميل المرفق. يرجى المحاولة مرة أخرى.');
+    }
 }
 const imageOverlay = document.getElementById('image-overlay');
 const imageSrc = document.getElementById('image-src');
 async function viewReceipt(t) {
+    if (!t.receipt_url) {
+        alert('المرفق غير جاهز للعرض. يرجى إعادة فتح العهدة والمحاولة مرة أخرى.');
+        return;
+    }
+    if (isPdfReceipt(t)) {
+        window.open(t.receipt_url, '_blank', 'noopener,noreferrer');
+        return;
+    }
     imageOverlay.classList.remove('hidden');
-    imageSrc.src = t.receipt_url ?? '';
+    imageSrc.src = t.receipt_url;
+}
+function isPdfReceipt(t) {
+    return /\.pdf$/i.test(t.doc_path ?? '');
+}
+async function renderPdfPreview(url, img) {
+    const [{ getDocument, GlobalWorkerOptions }, { default: workerUrl }] = await Promise.all([
+        import('pdfjs-dist'),
+        import('pdfjs-dist/build/pdf.worker.min.mjs?url'),
+    ]);
+    if (!img.isConnected)
+        return;
+    GlobalWorkerOptions.workerSrc = workerUrl;
+    const task = getDocument({ url });
+    // Password-protected files can still be opened in the browser's PDF viewer.
+    task.onPassword = () => { void task.destroy(); };
+    try {
+        const pdf = await task.promise;
+        const page = await pdf.getPage(1);
+        const original = page.getViewport({ scale: 1 });
+        const viewport = page.getViewport({ scale: 800 / Math.max(original.width, original.height) });
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.ceil(viewport.width);
+        canvas.height = Math.ceil(viewport.height);
+        await page.render({ canvas, viewport }).promise;
+        if (img.isConnected)
+            img.src = canvas.toDataURL('image/png');
+    }
+    finally {
+        await task.destroy();
+    }
 }
 const receiptsTable = document.getElementById('custody-attachments-table');
 const receiptsArea = document.getElementById('custody-attachments');
 async function loadRecipts() {
-    await attachReceiptUrls();
-    const txnsReceipts = txns
+    const transactions = txns;
+    await attachReceiptUrls(transactions);
+    if (transactions !== txns)
+        return;
+    const txnsReceipts = transactions
         .filter(t => t.doc_path !== null);
     if (txnsReceipts.length === 0) {
         receiptsTable.classList.add('hidden');
         return;
     }
-    console.log(txnsReceipts);
     let receiptsArray = [];
     txnsReceipts.forEach(txn => {
         const isExpense = txn.expense !== 0;
         const amountspan = `<span class="flex shrink-0 items-center gap-1 text-xs font-medium text-${isExpense ? '[#B37073]' : 'emerald-800'}">${isExpense ? txn.expense.toFixed(2) : txn.deposit.toFixed(2)}${riyalsSVGsmol}</span>`;
         let cell = `<div class="flex min-w-0 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white">
-                            <img class="h-56 w-full bg-gray-50 object-contain p-3" src="${txn.receipt_url}">
+                            <button type="button" class="receipt-preview cursor-pointer" aria-label="عرض المرفق">
+                                <img class="h-56 w-full bg-gray-50 object-contain p-3" alt="${isPdfReceipt(txn) ? 'PDF — الصفحة الأولى' : 'صورة المرفق'}">
+                            </button>
                             <div class="space-y-2 border-t border-gray-100 px-3 py-3 text-right">
                                 <span class="block truncate text-sm font-semibold text-gray-700" dir="auto">${txn.description}</span>
                                 <div class="flex items-center justify-between gap-2">
@@ -197,9 +248,26 @@ async function loadRecipts() {
     });
     receiptsArea.innerHTML = receiptsArray.join('\n');
     receiptsTable.classList.remove('hidden');
+    receiptsArea.querySelectorAll('.receipt-preview').forEach((button, index) => {
+        const txn = txnsReceipts[index];
+        button.addEventListener('click', () => viewReceipt(txn));
+        const img = button.querySelector('img');
+        if (!txn.receipt_url) {
+            img.alt = 'تعذر تحميل المرفق';
+        }
+        else if (isPdfReceipt(txn)) {
+            void renderPdfPreview(txn.receipt_url, img).catch(error => {
+                console.error('Failed to render PDF preview:', error);
+                img.alt = 'تعذرت معاينة PDF — اضغط لفتح الملف';
+            });
+        }
+        else {
+            img.src = txn.receipt_url;
+        }
+    });
 }
-async function attachReceiptUrls() {
-    const paths = txns
+async function attachReceiptUrls(transactions) {
+    const paths = transactions
         .filter(t => t.doc_path !== null)
         .map(t => t.doc_path);
     if (paths.length === 0)
@@ -216,7 +284,7 @@ async function attachReceiptUrls() {
         if (item.signedUrl && item.path)
             urlByPath[item.path] = item.signedUrl;
     }
-    for (const t of txns) {
+    for (const t of transactions) {
         t.receipt_url = t.doc_path ? (urlByPath[t.doc_path] ?? undefined) : undefined;
     }
 }
@@ -327,4 +395,106 @@ async function deleteTransaction(txn) {
         }
     }
     return true;
+}
+// Print menu and CSV export
+const printMenu = document.getElementById('txn-print-menu');
+const printOptions = document.getElementById('txn-print-options');
+let printMenuOpen = false;
+function togglePrintMenu(nextOpen = !printMenuOpen) {
+    printMenuOpen = nextOpen;
+    printOptions.classList.toggle('opacity-0', !printMenuOpen);
+    printOptions.classList.toggle('-translate-y-2', !printMenuOpen);
+    printOptions.classList.toggle('pointer-events-none', !printMenuOpen);
+    printOptions.inert = !printMenuOpen;
+    printBtn.setAttribute('aria-expanded', String(printMenuOpen));
+}
+printBtn.addEventListener('click', () => togglePrintMenu());
+document.addEventListener('click', (event) => {
+    if (printMenuOpen && event.target instanceof Node && !printMenu.contains(event.target)) {
+        togglePrintMenu(false);
+    }
+});
+document.addEventListener('keydown', (event) => {
+    if (printMenuOpen && event.key === 'Escape') {
+        togglePrintMenu(false);
+        printBtn.focus();
+    }
+});
+printOptions.querySelectorAll('button').forEach(button => {
+    button.addEventListener('click', () => {
+        togglePrintMenu(false);
+        printBtn.focus();
+    });
+});
+document.getElementById('txn-print-csv').addEventListener('click', downloadCsv);
+const pdfButton = document.getElementById('txn-print-pdf');
+pdfButton.addEventListener('click', async () => {
+    const custody = activeCustody;
+    if (!custody || !custody.summary || !custody.transactions) {
+        alert('يرجى الانتظار حتى تحميل بيانات العهدة والملخص.');
+        return;
+    }
+    if (pdfButton.disabled)
+        return;
+    pdfButton.disabled = true;
+    try {
+        const { prepareCustodyStatement, generateCustodyStatementPDF } = await import('./custodyStatement');
+        const data = prepareCustodyStatement(custody, { name: document.title });
+        await generateCustodyStatementPDF(data);
+    }
+    catch (error) {
+        console.error('Failed to export custody PDF:', error);
+        alert('تعذر إنشاء ملف PDF. يرجى المحاولة مرة أخرى.');
+    }
+    finally {
+        pdfButton.disabled = false;
+    }
+});
+function downloadCsv() {
+    const custody = activeCustody;
+    if (!custody || !custody.summary || !custody.transactions) {
+        alert('يرجى الانتظار حتى تحميل بيانات العهدة والملخص.');
+        return;
+    }
+    const rows = [
+        ['تفاصيل العهدة'],
+        ['رقم العهدة', custody.id],
+        ['صاحب العهدة', custody.custodian],
+        ['نوع العهدة', custody.type],
+        ['تاريخ الإنشاء', formatDateDDMMYYYY(custody.created_at)],
+        ['مبلغ العهدة', custody.initial_funding.toFixed(2)],
+        ['رصيد العهدة', custody.balance.toFixed(2)],
+        [],
+        ['الملخص المالي'],
+        ['الرصيد المتبقي', custody.summary.balance.toFixed(2)],
+        ['إجمالي المدين (القبض)', custody.summary.total_deposit.toFixed(2)],
+        ['إجمالي الدائن (الصرف)', custody.summary.total_expense.toFixed(2)],
+        [],
+        ['حركات العهدة'],
+        ['#', 'تاريخ الفاتورة', 'البيان', 'المرفق', 'المقبوضات (مدين)', 'المصروفات (دائن)', 'الرصيد'],
+        ...custody.transactions.map((txn, index) => [
+            index + 1,
+            formatDateDDMMYYYY(txn.created_at),
+            txn.description,
+            txn.doc_path ?? '',
+            txn.deposit.toFixed(2),
+            txn.expense.toFixed(2),
+            txn.running_balance?.toFixed(2) ?? '',
+        ]),
+    ];
+    const csv = rows.map(row => row.map(value => {
+        let text = String(value);
+        // Keep user-entered text from being interpreted as a spreadsheet formula.
+        if (/^\s*[=+@-]/.test(text) && !/^-?\d+(\.\d+)?$/.test(text))
+            text = "'" + text;
+        return `"${text.replace(/"/g, '""')}"`;
+    }).join(',')).join('\r\n');
+    const url = URL.createObjectURL(new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8;' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `custody-${custody.id.replace(/[<>:"/\\|?*\x00-\x1F]/g, '_')}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
