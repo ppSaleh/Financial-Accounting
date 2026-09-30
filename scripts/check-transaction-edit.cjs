@@ -26,6 +26,9 @@ function element(id) {
       setAttribute(name, value) { this[name] = value; },
       removeAttribute(name) { delete this[name]; },
       focus() {}, reset() { for (const el of elements.values()) el.value = ''; },
+      open: false,
+      showModal() { this.open = true; },
+      close() { this.open = false; },
       checkValidity: () => true, reportValidity() {}, dispatchEvent() {},
     });
   }
@@ -43,7 +46,10 @@ const context = vm.createContext({
   CustomEvent: class { constructor(type, options) { Object.assign(this, { type }, options); } },
   console: { error() {} },
   activeCustody: { id: 'custody-1' },
-  loadCustody: async () => { refreshes++; },
+  loadCustody: async () => {
+    assert.equal(element('crt-txn-overlay').open, false, 'Close before refreshing transactions');
+    refreshes++;
+  },
   supabaseClient: {
     storage: { from: () => storage },
     from: () => ({
@@ -69,10 +75,17 @@ input('form').dataset.availableBalance = '20';
 
 (async () => {
   context.openEdit(txn);
+  assert.equal(input('overlay').open, true);
+  input('overlay').listeners.cancel({ preventDefault() { assert.fail('Escape should be allowed when idle'); } });
   assert.equal(input('amount').max, '120');
   assert.equal(input('date').value, txn.transaction_date);
   assert.equal(input('file-name').textContent, 'old.pdf');
-  await Promise.all([submit(), submit()]);
+  const saving = submit();
+  let cancelPrevented = false;
+  input('overlay').listeners.cancel({ preventDefault() { cancelPrevented = true; } });
+  assert.equal(cancelPrevented, true, 'Escape must not close the dialog during a save');
+  await Promise.all([saving, submit()]);
+  assert.equal(input('overlay').open, false, 'Successful save closes the dialog');
   assert.equal(writes.length, 1, 'Repeated submit must save once');
   assert.equal(writes[0].id, txn.id);
   assert.equal(writes[0].payload.doc_path, txn.doc_path);
@@ -102,7 +115,7 @@ input('form').dataset.availableBalance = '20';
   dbError = { message: 'Update denied' };
   await submit();
   assert.equal(removed.at(-1), uploaded.at(-1), 'Failed edit rolls back new upload only');
-  assert.equal(input('overlay').classList.contains('hidden'), false);
+  assert.equal(input('overlay').open, true);
   assert.equal(input('action').disabled, false);
   assert.match(input('message').textContent, /Update denied/);
   dbError = null;
@@ -118,7 +131,9 @@ input('form').dataset.availableBalance = '20';
 
   context.openEdit(txn);
   input('cancel').listeners.click();
+  assert.equal(input('overlay').open, false);
   input('open').listeners.click();
+  assert.equal(input('overlay').open, true);
   assert.equal(input('description').value, '');
   assert.equal(input('file-name').textContent, 'لم يتم اختيار ملف');
   input('description').value = 'New transaction';

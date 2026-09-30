@@ -40,7 +40,7 @@ openButton.addEventListener('click', () => {
     if (isSaving)
         return;
     resetForm();
-    overlay.classList.remove('hidden');
+    overlay.showModal();
     dateInput.value = getTodayDate();
     descriptionInput.focus();
 });
@@ -51,7 +51,7 @@ export function openEdit(txn) {
     editingTransaction = txn;
     titleLabel.textContent = 'تعديل الفاتورة';
     submitButton.textContent = 'حفظ التعديلات';
-    overlay.classList.remove('hidden');
+    overlay.showModal();
     descriptionInput.value = txn.description;
     dateInput.value = txn.transaction_date;
     amountInput.value = String(txn.expense || txn.deposit);
@@ -286,7 +286,7 @@ form.addEventListener('submit', async (event) => {
         custody.summary = undefined;
         custody.transactions = undefined;
         // The write is complete; close before refreshing so it cannot be submitted again.
-        overlay.classList.add('hidden');
+        overlay.close();
         resetForm();
         await loadCustody(custody);
     }
@@ -392,13 +392,17 @@ async function editTransaction(params) {
 cancelButton.addEventListener('click', () => {
     if (isSaving)
         return;
-    overlay.classList.add('hidden');
+    overlay.close();
     resetForm();
     form.dispatchEvent(new CustomEvent('crt-txn-cancel', { bubbles: true }));
 });
 window.addEventListener('beforeunload', () => {
     if (selectedFileUrl)
         URL.revokeObjectURL(selectedFileUrl);
+});
+overlay.addEventListener('cancel', (event) => {
+    if (isSaving)
+        event.preventDefault();
 });
 let mouseDownTarget = null;
 overlay.addEventListener("mousedown", (event) => {
@@ -412,9 +416,9 @@ overlay.addEventListener("mouseup", (event) => {
         target === mouseDownTarget &&
         target instanceof Element) {
         if (target.matches(".crt-overlay:not(.forced)"))
-            overlay.classList.add("hidden");
+            overlay.close();
         if (target.matches(".crt-overlay-sub"))
-            overlay.classList.add("hidden");
+            overlay.close();
     }
     mouseDownTarget = null;
 });

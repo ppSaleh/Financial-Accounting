@@ -54,10 +54,6 @@ const Displayname = document.getElementById('display-name');
 const changeDisplaynameBtn = document.getElementById('profile-change-displayname');
 const profileRole = document.getElementById('profile-role');
 const logoutBtn = document.getElementById('profile-logout');
-const displayNameOverlay = document.getElementById('displayname-overlay');
-const displayNameInput = document.getElementById('displayname-input');
-const displayNameConfirm = document.getElementById('displayname-confirm');
-const displayNameCancel = document.getElementById('displayname-cancel');
 let open = false;
 let profile;
 function isSupervisor() {
@@ -77,18 +73,6 @@ async function buildprofile() {
     profileMenu.classList.remove('hidden');
     Displayname.textContent = profile.display_name;
     profileRole.textContent = `الرتبة: ${isSupervisor() ? 'مشرف' : 'موظف'}`;
-}
-function showDisplayNamePrompt(force = false) {
-    if (force) {
-        displayNameCancel.classList.add('hidden');
-        displayNameOverlay.classList.add('forced');
-    }
-    else {
-        displayNameCancel.classList.remove('hidden');
-        displayNameOverlay.classList.remove('forced');
-    }
-    displayNameOverlay.classList.remove('hidden');
-    return false;
 }
 async function fetchProfile(userId) {
     const { data, error } = await supabaseClient
@@ -130,6 +114,124 @@ logoutBtn.addEventListener('click', async () => {
     showLogin();
 });
 changeDisplaynameBtn.addEventListener('click', () => showDisplayNamePrompt());
+// Display name
+const displayNameOverlay = document.getElementById('displayname-overlay');
+const displayNameInput = document.getElementById('displayname-input');
+const displayNameConfirm = document.getElementById('displayname-confirm');
+const displayNameCancel = document.getElementById('displayname-cancel');
+const displayNameStatus = document.getElementById('displayname-status');
+let isSavingDisplayName = false;
+function showDisplayNamePrompt(force = false) {
+    if (isSavingDisplayName)
+        return false;
+    displayNameStatus.textContent = '';
+    displayNameInput.setCustomValidity('');
+    if (force) {
+        displayNameCancel.classList.add('hidden');
+        displayNameOverlay.classList.add('forced');
+    }
+    else {
+        displayNameCancel.classList.remove('hidden');
+        displayNameOverlay.classList.remove('forced');
+    }
+    displayNameInput.value = profile?.display_name ?? '';
+    displayNameOverlay.showModal();
+    displayNameInput.focus();
+    return false;
+}
+displayNameConfirm.addEventListener('click', async () => {
+    if (isSavingDisplayName)
+        return;
+    const name = displayNameInput.value.trim();
+    displayNameInput.setCustomValidity(name ? '' : 'يرجى إدخال اسم العرض');
+    if (!displayNameInput.reportValidity())
+        return;
+    if (name === (profile?.display_name ?? '').trim())
+        return;
+    if (!profile?.id)
+        return;
+    const userId = profile.id;
+    const buttonText = displayNameConfirm.textContent;
+    isSavingDisplayName = true;
+    displayNameConfirm.disabled = true;
+    displayNameCancel.disabled = true;
+    displayNameInput.disabled = true;
+    displayNameConfirm.textContent = 'جارٍ الحفظ…';
+    displayNameConfirm.classList.add('animate-pulse');
+    displayNameConfirm.setAttribute('aria-busy', 'true');
+    displayNameStatus.textContent = 'جارٍ حفظ اسم العرض…';
+    try {
+        if (!await saveDisplayName(userId, name)) {
+            displayNameStatus.textContent = 'تعذر حفظ اسم العرض. يرجى المحاولة مرة أخرى.';
+            return;
+        }
+        displayNameOverlay.close();
+        if (profile?.id === userId) {
+            profile.display_name = name;
+            Displayname.textContent = name;
+        }
+        displayNameOverlay.classList.remove('forced');
+        displayNameCancel.classList.remove('hidden');
+    }
+    catch (error) {
+        console.error('Failed to save display name:', error);
+        displayNameStatus.textContent = 'تعذر حفظ اسم العرض. يرجى المحاولة مرة أخرى.';
+    }
+    finally {
+        isSavingDisplayName = false;
+        displayNameConfirm.disabled = false;
+        displayNameCancel.disabled = false;
+        displayNameInput.disabled = false;
+        displayNameConfirm.textContent = buttonText;
+        displayNameConfirm.classList.remove('animate-pulse');
+        displayNameConfirm.removeAttribute('aria-busy');
+    }
+});
+displayNameCancel.addEventListener('click', () => {
+    if (isSavingDisplayName)
+        return;
+    displayNameOverlay.close();
+});
+displayNameOverlay.addEventListener('cancel', (event) => {
+    if (isSavingDisplayName || displayNameOverlay.classList.contains('forced')) {
+        event.preventDefault();
+    }
+});
+displayNameInput.addEventListener('input', () => {
+    displayNameInput.setCustomValidity('');
+    displayNameStatus.textContent = '';
+});
+const displayNameLayout = document.getElementById('displayname-overlay-layout');
+let displayNameMouseDownTarget = null;
+displayNameOverlay.addEventListener('mousedown', (event) => {
+    displayNameMouseDownTarget = event.target;
+});
+displayNameOverlay.addEventListener('mouseup', (event) => {
+    const clickedBackdrop = event.target === displayNameOverlay ||
+        event.target === displayNameLayout;
+    if (event.button === 0 &&
+        event.target === displayNameMouseDownTarget &&
+        clickedBackdrop &&
+        !isSavingDisplayName &&
+        !displayNameOverlay.classList.contains('forced')) {
+        displayNameOverlay.close();
+    }
+    displayNameMouseDownTarget = null;
+});
+async function saveDisplayName(userId, name) {
+    const trimmed = name.trim();
+    if (!trimmed)
+        return false; // don't let them submit blank
+    const { error } = await supabaseClient
+        .from('profiles')
+        .update({ display_name: trimmed })
+        .eq('id', userId);
+    if (error) {
+        console.error('Failed to save display name:', error);
+        return false;
+    }
+    return true;
+}
 // Session & Auth
 async function initSession() {
     const { data: { session } } = await supabaseClient.auth.getSession();

@@ -23,7 +23,7 @@ interface EditTransactionParams {
 }
 
 const form = document.getElementById('crt-txn-form') as HTMLFormElement
-const overlay = document.getElementById('crt-txn-overlay')!
+const overlay = document.getElementById('crt-txn-overlay') as HTMLDialogElement
 const overlayLayout = document.getElementById('crt-txn-overlay-layout')!
 const openButton = document.getElementById('crt-txn-open')!
 const typeButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.crt-txn-type-button'))
@@ -65,7 +65,7 @@ dateInput.value = getTodayDate()
 openButton.addEventListener('click', () => {
   if (isSaving) return
   resetForm()
-  overlay.classList.remove('hidden');
+  overlay.showModal();
   dateInput.value = getTodayDate();
   descriptionInput.focus();
 })
@@ -75,7 +75,7 @@ export function openEdit(txn: Transaction) {
   editingTransaction = txn
   titleLabel.textContent = 'تعديل الفاتورة'
   submitButton.textContent = 'حفظ التعديلات'
-  overlay.classList.remove('hidden');
+  overlay.showModal();
   descriptionInput.value = txn.description;
   dateInput.value = txn.transaction_date
   amountInput.value = String(txn.expense || txn.deposit)
@@ -336,7 +336,7 @@ form.addEventListener('submit', async (event) => {
     custody.summary = undefined
     custody.transactions = undefined
     // The write is complete; close before refreshing so it cannot be submitted again.
-    overlay.classList.add('hidden')
+    overlay.close()
     resetForm()
     await loadCustody(custody)
   } catch (error) {
@@ -459,13 +459,17 @@ async function editTransaction(params: EditTransactionParams): Promise<boolean> 
 
 cancelButton.addEventListener('click', () => {
   if (isSaving) return
-  overlay.classList.add('hidden')
+  overlay.close()
   resetForm()
   form.dispatchEvent(new CustomEvent('crt-txn-cancel', { bubbles: true }))
 })
 
 window.addEventListener('beforeunload', () => {
   if (selectedFileUrl) URL.revokeObjectURL(selectedFileUrl)
+})
+
+overlay.addEventListener('cancel', (event) => {
+  if (isSaving) event.preventDefault()
 })
 
 let mouseDownTarget: EventTarget | null = null;
@@ -484,8 +488,8 @@ overlay.addEventListener("mouseup", (event) => {
     target === mouseDownTarget &&
     target instanceof Element
   ) {
-    if (target.matches(".crt-overlay:not(.forced)")) overlay.classList.add("hidden");
-    if (target.matches(".crt-overlay-sub")) overlay.classList.add("hidden");
+    if (target.matches(".crt-overlay:not(.forced)")) overlay.close();
+    if (target.matches(".crt-overlay-sub")) overlay.close();
   }
 
   mouseDownTarget = null;

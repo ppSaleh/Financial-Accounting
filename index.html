@@ -38,7 +38,7 @@
                     <i data-lucide="chevron-down"></i>
                 </button>
 
-                <div id="profile-options" inert class="absolute right-0 top-full w-full z-10
+                <div id="profile-options" inert class="absolute right-0 top-full w-full z-30
                 bg-gray-100 rounded flex flex-col whitespace-nowrap
                 opacity-0 -translate-y-2 pointer-events-none cursor-pointer
                 transition-[opacity,transform] duration-200 ease-out">
@@ -240,22 +240,26 @@
 
                                 <div class="flex gap-1.5 items-center">
                                     <div id="txn-print-menu" class="relative w-fit">
-                                    <button id="txn-print-btn" type="button" aria-expanded="false" aria-controls="txn-print-options"
-                                        class="bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer">
-                                        <i class="w-5 h-5 m-0" data-lucide="printer"></i>
-                                        <span>طباعة</span>
-                                    </button>
-                                    <div id="txn-print-options" inert class="absolute left-0 top-full z-50 mt-1 w-24 bg-[#4E5D72] text-white text-sm font-semibold rounded-md shadow-lg flex flex-col whitespace-nowrap
+                                        <button id="txn-print-btn" type="button" aria-expanded="false"
+                                            aria-controls="txn-print-options"
+                                            class="bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer">
+                                            <i class="w-5 h-5 m-0" data-lucide="printer"></i>
+                                            <span>طباعة</span>
+                                        </button>
+                                        <div id="txn-print-options" inert
+                                            class="absolute left-0 top-full z-50 mt-1 w-24 bg-[#4E5D72] text-white text-sm font-semibold rounded-md shadow-lg flex flex-col whitespace-nowrap
                                         opacity-0 -translate-y-2 pointer-events-none transition-[opacity,transform] duration-200 ease-out">
-                                        <button id="txn-print-pdf" type="button" class="flex items-center gap-2 p-3 rounded-md hover:bg-[#6C788A] focus-visible:bg-[#6C788A] transition-colors cursor-pointer">
-                                            <i data-lucide="printer" class="w-5 h-5"></i>
-                                            <span>PDF</span>
-                                        </button>
-                                        <button id="txn-print-csv" type="button" class="flex items-center gap-2 p-3 rounded-md hover:bg-[#6C788A] focus-visible:bg-[#6C788A] transition-colors cursor-pointer">
-                                            <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
-                                            <span>CSV</span>
-                                        </button>
-                                    </div>
+                                            <button id="txn-print-pdf" type="button"
+                                                class="flex items-center gap-2 p-3 rounded-md hover:bg-[#6C788A] focus-visible:bg-[#6C788A] transition-colors cursor-pointer">
+                                                <i data-lucide="printer" class="w-5 h-5"></i>
+                                                <span>PDF</span>
+                                            </button>
+                                            <button id="txn-print-csv" type="button"
+                                                class="flex items-center gap-2 p-3 rounded-md hover:bg-[#6C788A] focus-visible:bg-[#6C788A] transition-colors cursor-pointer">
+                                                <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+                                                <span>CSV</span>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="w-px h-5 mx-1 bg-slate-200 flex-shrink-0"></div>
                                     <button id="txn-edit"
@@ -507,81 +511,114 @@
     </div>
 
     </div>
-    <div id="displayname-overlay"
-        class="hidden overlay fixed inset-0 z-100 flex items-center justify-center bg-black/50">
-        <div class="bg-white p-6 flex flex-col gap-4 rounded-2xl shadow-sm border border-gray-200 w-96  mx-auto">
-            <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
-                تغيير اسم العرض
-            </h2>
-            <input type="text" id="displayname-input" required placeholder="اسمك"
-                class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
-            <div class="gap-4 w-full flex">
-                <button id="displayname-confirm"
-                    class="bg-emerald-600 flex-1 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl text-sm transition cursor-pointer">
-                    حفظ التعديل
-                </button>
-                <button id="displayname-cancel"
-                    class="bg-gray-200 flex-1 hover:bg-gray-300 text-gray-700 font-bold p-3 rounded-xl text-sm transition cursor-pointer">
-                    رجوع
-                </button>
+    <dialog id="displayname-overlay" aria-modal="true" aria-labelledby="displayname-title" class="fixed inset-0 z-[100] m-0 h-full max-h-none w-full max-w-none
+           overflow-y-auto border-0 bg-transparent p-4 sm:p-6
+           backdrop:bg-slate-950/70 backdrop:backdrop-blur-sm">
+        <div id="displayname-overlay-layout" class="flex min-h-full items-center justify-center">
+            <div class="bg-white p-6 flex flex-col gap-4 rounded-2xl shadow-sm border border-gray-200 w-96  mx-auto">
+                <h2 id="displayname-title" class="text-base font-bold text-gray-800 flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                    تغيير اسم العرض
+                </h2>
+                <input type="text" id="displayname-input" required placeholder="اسم العرض"
+                    class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+                <div class="gap-4 w-full flex">
+                    <button id="displayname-confirm"
+                        class="bg-emerald-600 flex-1 hover:bg-emerald-700 text-white font-bold p-3 rounded-xl text-sm transition cursor-pointer disabled:cursor-wait disabled:opacity-70">
+                        حفظ التعديل
+                    </button>
+                    <button id="displayname-cancel"
+                        class="bg-gray-200 flex-1 hover:bg-gray-300 text-gray-700 font-bold p-3 rounded-xl text-sm transition cursor-pointer">
+                        رجوع
+                    </button>
+                </div>
+                <p id="displayname-status" role="status" aria-live="polite" class="text-sm text-gray-600 empty:hidden"></p>
             </div>
         </div>
-    </div>
+    </dialog>
     <!--  إنشاء عهدة جديدة -->
-    <div id="create-custody-overlay" class="hidden overlay fixed inset-0 z-100 flex items-center bg-black/50">
-        <div id="create-custody-form"
-            class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 max-w-2xl w-1/2 mx-auto flex flex-col gap-4">
-            <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
-                إعداد وإنشاء حساب عهدة جديدة
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">رمز المرجع /
-                        العهدة</label>
-                    <input type="text" id="create-custody-id" required placeholder="مثال: CUST-2026-01"
-                        class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+    <dialog id="create-custody-overlay" role="dialog" aria-modal="true" aria-labelledby="create-custody-title"
+        class="fixed inset-0 z-[100] m-0 h-full max-h-none w-full max-w-none overflow-y-auto border-0 bg-transparent p-4 backdrop:bg-slate-950/70 backdrop:backdrop-blur-sm sm:p-6">
+        <div id="create-custody-overlay-layout" class="flex min-h-full items-center justify-center">
+            <div id="create-custody-form"
+                class="flex w-full max-w-2xl flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-2xl sm:p-6">
+                <h2 id="create-custody-title" class="text-base font-bold text-gray-800 flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                    إعداد وإنشاء حساب عهدة جديدة
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">رمز المرجع /
+                            العهدة</label>
+                        <input type="text" id="create-custody-id" required placeholder="مثال: CUST-2026-01"
+                            class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">نوع العهدة</label>
+                        <select id="create-custody-type"
+                            class="w-full border border-gray-300 rounded-lg p-2.5 text-sm bg-white outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="عهدة مشتريات">عهدة مشتريات</option>
+                            <option value="عهدة تشغيل وصيانة">عهدة تشغيل وصيانة</option>
+                            <option value="عهدة مصاريف سفر">عهدة مصاريف سفر</option>
+                            <option value="عهدة مكتبية وإدارية">عهدة مكتبية وإدارية</option>
+                            <option value="عهدة طوارئ">عهدة طوارئ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">اسم المسؤول عن العهدة
+                            (المستلم)</label>
+                        <input type="text" id="create-custody-custodian" required placeholder="اسم الشخص المسؤول"
+                            class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">المبلغ الأولي (مدين /
+                            إيداع)</label>
+                        <input type="number" step="100" id="create-custody-initial-funding" required placeholder="0"
+                            min="0"
+                            class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div id="create-custody-file-field" class="min-w-0 md:col-span-2">
+                        <label id="create-custody-file-label" for="create-custody-receipt"
+                            class="mb-1 block text-xs font-semibold text-gray-600">مرفق معاملة المبلغ الأولي
+                            (اختياري)</label>
+                        <p id="create-custody-file-help" class="mb-2 text-xs text-gray-500">صورة أو ملف PDF يخص إيداع
+                            المبلغ الأولي، بحد أقصى 6 ميجابايت.</p>
+                        <div id="create-custody-drop-zone"
+                            class="flex min-h-12 flex-wrap items-center gap-2 rounded-lg border-2 border-dashed border-gray-300 px-2 text-sm transition-colors focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/25 sm:flex-nowrap">
+                            <input id="create-custody-receipt" class="peer sr-only" name="receipt" type="file"
+                                accept="application/pdf,image/*" aria-describedby="create-custody-file-help" />
+                            <label for="create-custody-receipt"
+                                class="flex h-8 shrink-0 cursor-pointer items-center rounded-lg bg-gray-100 px-3 hover:bg-gray-200 peer-focus-visible:ring-2 peer-focus-visible:ring-emerald-500">اختيار
+                                ملف</label>
+                            <span id="create-custody-file-name" class="min-w-0 flex-1 truncate text-gray-500">لم يتم
+                                اختيار ملف</span>
+                            <div id="create-custody-file-actions" class="hidden shrink-0 items-center gap-1">
+                                <button id="create-custody-view-file" type="button"
+                                    class="h-8 cursor-pointer rounded-lg bg-emerald-50 px-3 text-emerald-700 hover:bg-emerald-100">عرض
+                                    الملف</button>
+                                <button id="create-custody-clear-file" type="button"
+                                    aria-label="إزالة مرفق المبلغ الأولي"
+                                    class="h-8 cursor-pointer rounded px-2 text-xl leading-none text-gray-500 hover:bg-red-50 hover:text-red-600">×</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">نوع العهدة</label>
-                    <select id="create-custody-type"
-                        class="w-full border border-gray-300 rounded-lg p-2.5 text-sm bg-white outline-none focus:ring-2 focus:ring-emerald-500">
-                        <option value="عهدة مشتريات">عهدة مشتريات</option>
-                        <option value="عهدة تشغيل وصيانة">عهدة تشغيل وصيانة</option>
-                        <option value="عهدة مصاريف سفر">عهدة مصاريف سفر</option>
-                        <option value="عهدة مكتبية وإدارية">عهدة مكتبية وإدارية</option>
-                        <option value="عهدة طوارئ">عهدة طوارئ</option>
-                    </select>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-full">
+                    <button id="create-custody-create"
+                        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition cursor-pointer">
+                        إنشاء العهدة
+                    </button>
+                    <button id="create-custody-cancel"
+                        class="w-full bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 rounded-xl text-sm transition cursor-pointer">
+                        رجوع</button>
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">اسم المسؤول عن العهدة
-                        (المستلم)</label>
-                    <input type="text" id="create-custody-custodian" required placeholder="اسم الشخص المسؤول"
-                        class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">المبلغ الأولي (مدين /
-                        إيداع)</label>
-                    <input type="number" step="100" id="create-custody-initial-funding" required placeholder="0" min="0"
-                        class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-
+                <div id="create-custody-message" class="hidden"></div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-full">
-                <button id="create-custody-create"
-                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition cursor-pointer">
-                    إنشاء العهدة
-                </button>
-                <button id="create-custody-cancel"
-                    class="w-full bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 rounded-xl text-sm transition cursor-pointer">
-                    رجوع</button>
-            </div>
-            <div id="create-custody-message" class="hidden"></div>
         </div>
-    </div>
+    </dialog>
     <!--  إنشاء فاتورة جديدة -->
-    <div id="crt-txn-overlay" class="hidden crt-overlay fixed inset-0 z-[100] overflow-y-auto bg-black/50 p-4 sm:p-6">
+    <dialog id="crt-txn-overlay" role="dialog" aria-modal="true" aria-labelledby="crt-txn-title"
+        class="crt-overlay fixed inset-0 z-[100] m-0 h-full max-h-none w-full max-w-none overflow-y-auto border-0 bg-transparent p-4 backdrop:bg-slate-950/70 backdrop:backdrop-blur-sm sm:p-6">
         <div id="crt-txn-overlay-layout" class="crt-overlay-sub flex min-h-full items-center justify-center">
             <!-- Set data-available-balance to enforce a maximum expense amount. -->
             <form id="crt-txn-form" data-available-balance="" novalidate
@@ -693,7 +730,7 @@
                 </div>
             </form>
         </div>
-    </div>
+    </dialog>
     <!-- عرض الصور -->
     <div id="image-overlay"
         class="hidden overlay fixed inset-0 z-100 flex items-center justify-center bg-slate-950/70 p-3 backdrop-blur-sm sm:p-6">

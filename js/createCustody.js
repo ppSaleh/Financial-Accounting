@@ -1,6 +1,7 @@
 import { supabaseClient } from "./login";
 import { loadCustodies } from "./custodies";
 const overlay = document.getElementById('create-custody-overlay');
+const overlayLayout = document.getElementById('create-custody-overlay-layout');
 const message = document.getElementById('create-custody-message');
 const createBtn = document.getElementById('create-custody-create');
 const cancelBtn = document.getElementById('create-custody-cancel');
@@ -9,6 +10,91 @@ const typeInput = document.getElementById('create-custody-type');
 const custodianInput = document.getElementById('create-custody-custodian');
 const initialFundingInput = document.getElementById('create-custody-initial-funding');
 const openBtn = document.getElementById('create-custody-btn');
+const fileInput = document.getElementById('create-custody-receipt');
+const fileName = document.getElementById('create-custody-file-name');
+const fileActions = document.getElementById('create-custody-file-actions');
+const dropZone = document.getElementById('create-custody-drop-zone');
+let selectedFile = null;
+let selectedFileUrl;
+let dragDepth = 0;
+let isSaving = false;
+function clearSelectedFile() {
+    selectedFile = null;
+    fileInput.value = '';
+    fileName.textContent = 'لم يتم اختيار ملف';
+    fileActions.classList.add('hidden');
+    fileActions.classList.remove('flex');
+    if (selectedFileUrl)
+        URL.revokeObjectURL(selectedFileUrl);
+    selectedFileUrl = undefined;
+}
+function selectFile(file) {
+    if (isSaving || !file)
+        return;
+    if (!file.type.startsWith('image/') && file.type !== 'application/pdf') {
+        showMessage('يرجى اختيار صورة أو ملف PDF');
+        fileInput.value = '';
+        return;
+    }
+    if (file.size > 6 * 1024 * 1024) {
+        showMessage('حجم الملف يجب ألا يتجاوز 6 ميجابايت');
+        fileInput.value = '';
+        return;
+    }
+    clearSelectedFile();
+    selectedFile = file;
+    fileName.textContent = file.name;
+    fileActions.classList.remove('hidden');
+    fileActions.classList.add('flex');
+    message.classList = 'hidden';
+}
+fileInput.addEventListener('change', () => selectFile(fileInput.files?.[0]));
+document.getElementById('create-custody-clear-file').addEventListener('click', () => {
+    if (isSaving)
+        return;
+    clearSelectedFile();
+    fileInput.focus();
+});
+document.getElementById('create-custody-view-file').addEventListener('click', () => {
+    if (!selectedFile)
+        return;
+    if (selectedFileUrl)
+        URL.revokeObjectURL(selectedFileUrl);
+    selectedFileUrl = URL.createObjectURL(selectedFile);
+    window.open(selectedFileUrl, '_blank', 'noopener,noreferrer');
+});
+function highlightDropZone(active) {
+    dropZone.classList.toggle('border-emerald-500', active);
+    dropZone.classList.toggle('bg-emerald-50', active);
+    dropZone.classList.toggle('border-gray-300', !active);
+}
+dropZone.addEventListener('dragenter', (event) => {
+    event.preventDefault();
+    if (isSaving)
+        return;
+    dragDepth++;
+    highlightDropZone(true);
+});
+dropZone.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    if (event.dataTransfer)
+        event.dataTransfer.dropEffect = isSaving ? 'none' : 'copy';
+});
+dropZone.addEventListener('dragleave', () => {
+    dragDepth = Math.max(0, dragDepth - 1);
+    if (!dragDepth)
+        highlightDropZone(false);
+});
+dropZone.addEventListener('drop', (event) => {
+    event.preventDefault();
+    dragDepth = 0;
+    highlightDropZone(false);
+    selectFile(event.dataTransfer?.files[0]);
+});
+window.addEventListener('beforeunload', () => {
+    if (selectedFileUrl)
+        URL.revokeObjectURL(selectedFileUrl);
+});
 const CUSTODY_TYPES = [
     'عهدة مشتريات',
     'عهدة تشغيل وصيانة',
@@ -17,13 +103,34 @@ const CUSTODY_TYPES = [
     'عهدة طوارئ',
 ];
 openBtn.addEventListener('click', () => {
-    overlay.classList.remove('hidden');
+    overlay.showModal();
     message.classList = 'hidden';
+    idInput.focus();
 });
 cancelBtn.addEventListener('click', () => {
-    overlay.classList.add('hidden');
+    if (isSaving)
+        return;
+    overlay.close();
+    clearSelectedFile();
+});
+overlay.addEventListener('cancel', (event) => {
+    if (isSaving)
+        event.preventDefault();
+});
+let mouseDownTarget = null;
+overlay.addEventListener('mousedown', (event) => {
+    mouseDownTarget = event.target;
+});
+overlay.addEventListener('mouseup', (event) => {
+    if (!isSaving && event.button === 0 && event.target === mouseDownTarget &&
+        (event.target === overlay || event.target === overlayLayout)) {
+        overlay.close();
+    }
+    mouseDownTarget = null;
 });
 createBtn.addEventListener('click', async () => {
+    if (isSaving)
+        return;
     const id = idInput.value.trim();
     const custodian = custodianInput.value.trim();
     const type = typeInput.value.trim();
@@ -43,15 +150,24 @@ createBtn.addEventListener('click', async () => {
         console.error('Invalid initial funding selected');
         return;
     }
-    const newCustody = await createCustodyWithOpeningTransaction(id, custodian, type, initialFunding);
-    if (newCustody) {
-        showMessage('تم إنشاء العهدة', false);
-        loadCustodies(true);
-        setTimeout(() => {
-            if (!overlay.matches('hidden'))
-                cancelBtn.click();
+    isSaving = true;
+    const controls = Array.from(document.querySelectorAll('#create-custody-form input, #create-custody-form select, #create-custody-form button'));
+    controls.forEach(control => { control.disabled = true; });
+    try {
+        const created = await createCustodyWithOpeningTransaction(id, custodian, type, initialFunding, selectedFile ?? undefined);
+        if (created) {
+            overlay.close();
             clearPanel();
-        }, 2000);
+            void loadCustodies(true).catch(error => console.error('Failed to refresh custodies:', error));
+        }
+    }
+    catch (error) {
+        console.error('Failed to create custody:', error);
+        showMessage('تعذر إتمام إنشاء العهدة. تحقق من الاتصال وحالة العهدة قبل إعادة المحاولة.');
+    }
+    finally {
+        isSaving = false;
+        controls.forEach(control => { control.disabled = false; });
     }
 });
 function clearPanel() {
@@ -59,6 +175,7 @@ function clearPanel() {
     custodianInput.value = '';
     typeInput.value = '';
     initialFundingInput.value = '';
+    clearSelectedFile();
 }
 function showMessage(msgContext, isError = true) {
     const classlist = isError ?
@@ -74,21 +191,31 @@ function getSelectedCustodyType() {
     const value = typeInput.value;
     return isCustodyType(value) ? value : null;
 }
-async function createCustodyWithOpeningTransaction(id, custodian, type, initialAmount) {
-    const { data, error } = await supabaseClient
+async function createCustodyWithOpeningTransaction(id, custodian, type, initialAmount, file) {
+    const docPath = file ? await uploadReceipt(file) : null;
+    if (file && docPath === null) {
+        showMessage('تعذر رفع مرفق المبلغ الأولي. لم يتم إنشاء العهدة.');
+        return false;
+    }
+    const { error } = await supabaseClient
         .rpc('create_custody_with_opening_transaction', {
         p_id: id,
         p_custodian: custodian,
         p_type: type,
         p_initial_amount: initialAmount,
-    })
-        .single();
+        p_doc_path: docPath,
+    });
     if (error) {
-        showMessage('لقد حصل خطأ اثناء انشاء العهدة: ' + error);
+        showMessage('لقد حصل خطأ اثناء انشاء العهدة: ' + error.message);
         console.error('Failed to create custody:', error);
-        return null;
+        if (docPath !== null) {
+            const { error: cleanupError } = await supabaseClient.storage.from('receipts').remove([docPath]);
+            if (cleanupError)
+                console.error('Failed to remove uploaded receipt after failed RPC:', cleanupError);
+        }
+        return false;
     }
-    return data;
+    return true;
 }
 async function createCustody(payload) {
     const { data, error } = await supabaseClient
