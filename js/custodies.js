@@ -46,7 +46,7 @@ function renderCustodies(custodies) {
                             <td class="px-4 py-3 mono text-gray-600 text-xs" dir="ltr">${formatDateDDMMYYYY(custody.created_at)}</td>
                             <td class="px-4 py-3 flex items-center gap-2 justify-center">
                                 <button
-                                    class="custodies-view cursor-pointer bg-slate-500 text-white text-xs font-semibold px-4 py-1.5 rounded-md hover:bg-slate-600 transition-colors">عرض
+                                    class="custodies-view row-btn">عرض
                                     التفاصيل</button>
                             </td>`;
         row.querySelector('.custodies-view')?.addEventListener('click', () => {
@@ -103,9 +103,6 @@ async function loadSummary() {
     summaryBalance.textContent = summary.balance.toFixed(2);
     summaryTotalDeposit.textContent = summary.total_deposit.toFixed(2);
     summaryTotalExpense.textContent = summary.total_expense.toFixed(2);
-    summaryBalance.innerHTML += riyalsSVG;
-    summaryTotalDeposit.innerHTML += riyalsSVG;
-    summaryTotalExpense.innerHTML += riyalsSVG;
 }
 async function getOverallSummary() {
     const { data, error } = await supabaseClient

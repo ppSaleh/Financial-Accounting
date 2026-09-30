@@ -56,10 +56,10 @@ async function renderCustody() {
         if (txn.doc_path !== null) receiptPaths.push(txn.doc_path)
         const row = document.createElement('tr');
         const fileCol = txn.doc_path === null ? '—' : `<button
-                                    class="view-img cursor-pointer bg-slate-500 hover:bg-slate-400 text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">
+                                    class="view-img row-btn">
                                     عرض</button>
                                 <button
-                                    class="download-img cursor-pointer bg-[#659095] hover:bg-[#83A6AA] text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">
+                                    class="download-img row-btn-green">
                                     تحميل</button>`;
         row.dataset.id = txn.id;
         row.classList = 'border-b border-gray-100 hover:bg-gray-50 transition-colors';
@@ -84,11 +84,8 @@ async function renderCustody() {
         fragment.appendChild(row);
     })
     body.append(fragment);
-    if (isEditmode) {
-        isEditmode = false;
-        custodyTableRow.querySelector('.actions-col')?.remove();
-        toggleEditMode();
-    }
+
+    if (isEditmode) toggleEditMode();
 
     loadRecipts();
 }
@@ -108,9 +105,6 @@ async function loadMeta(forceRefresh = false): Promise<void> {
     summaryBalance.textContent = activeCustody.summary.balance.toFixed(2);
     summaryTotalDeposit.textContent = activeCustody.summary.total_deposit.toFixed(2);
     summaryTotalExpense.textContent = activeCustody.summary.total_expense.toFixed(2);
-    summaryBalance.innerHTML += riyalsSVG;
-    summaryTotalDeposit.innerHTML += riyalsSVG;
-    summaryTotalExpense.innerHTML += riyalsSVG;
 
     crtForm.dataset.availableBalance = activeCustody.summary.balance.toFixed(2);
 }
@@ -321,6 +315,7 @@ async function attachReceiptUrls(transactions: Transaction[]): Promise<void> {
 
 returnBtn.addEventListener('click', () => {
     switchTable('custodies')
+    if (isEditmode) toggleEditMode();
 })
 const custodyTableRow = document.getElementById('custody-table-head')!;
 let isEditmode = false;
@@ -331,7 +326,7 @@ editBtn.addEventListener('click', () => {
 function toggleEditMode() {
     isEditmode = !isEditmode;
     if (isEditmode) {
-        editBtn.classList = 'bg-[#67987F] hover:bg-[#83AA96] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer';
+        editBtn.classList = 'btn-green';
         custodyTableRow.innerHTML += `<th
                                     class="actions-col px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
                                     الإجراءات</th>`;
@@ -350,10 +345,10 @@ function toggleEditMode() {
             const col = document.createElement('td');
             col.classList = 'action-row px-4 py-3';
             col.innerHTML = `<button
-                                        class="custody-delete cursor-pointer bg-[#B37073] hover:bg-[#C79497] text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">
+                                        class="custody-delete row-btn-red">
                                         حذف</button>
                                     <button
-                                        class="custody-edit cursor-pointer bg-slate-500 text-white text-xs font-semibold px-4 py-1.5 rounded-md hover:bg-slate-400 transition-colors">
+                                        class="custody-edit row-btn">
                                         تعديل</button>
 `;
             row.appendChild(col);
@@ -389,7 +384,7 @@ function toggleEditMode() {
             });
         })
     } else {
-        editBtn.classList = 'bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer';
+        editBtn.classList = 'btn';
         custodyTableRow.querySelector('.actions-col')?.remove();
         const rows = body.querySelectorAll('tr');
         if (!rows) return;

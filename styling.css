@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+body {
+    font-family: 'Tajawal', sans-serif;
+}
+
+
+.dot {
+    
+}
+.btn {
+    @apply bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex flex-shrink-0 items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer;
+}
+
+.btn-green {
+    @apply bg-[#67987F] hover:bg-[#83AA96] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer;
+}
+
+.btn-light {
+
+}
+
+.row-btn {
+    @apply cursor-pointer bg-slate-500 hover:bg-slate-400 text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors;
+}
+
+.row-btn-green {
+    @apply cursor-pointer bg-[#659095] hover:bg-[#83A6AA] text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors;
+}
+
+.row-btn-red {
+    @apply cursor-pointer bg-[#B37073] hover:bg-[#C79497] text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors
+}
+

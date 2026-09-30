@@ -6,13 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة العهد والسلف المالية</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <style>
-        @import "tailwindcss";
-
-        body {
-            font-family: 'Tajawal', sans-serif;
-        }
-    </style>
+    <link rel="stylesheet" href="styling.css">
 </head>
 
 <body class="bg-gray-100 min-h-screen p-4">
@@ -39,7 +33,7 @@
                 </button>
 
                 <div id="profile-options" inert class="absolute right-0 top-full w-full z-30
-                bg-gray-100 rounded flex flex-col whitespace-nowrap
+                bg-gray-100 rounded flex flex-col whitespace-nowrapf
                 opacity-0 -translate-y-2 pointer-events-none cursor-pointer
                 transition-[opacity,transform] duration-200 ease-out">
                     <span id="profile-change-displayname" class="select-none p-3 w-full rounded hover:bg-gray-200">تغيير
@@ -102,28 +96,26 @@
                                 <div class="flex">
                                     <div class="flex-1 min-w-0 px-5 py-4 text-right">
                                         <p class="text-sm text-gray-500 mb-1.5">الرصيد المتبقي</p>
-                                        <p id="sum-balance"
+                                        <p
                                             class="text-2xl font-extrabold text-gray-600 mono leading-none flex gap-2 items-center">
-                                            43,200.00
-                                            <i width="18px" data-lucide="saudi-riyal"></i>
+                                            <span id="sum-balance">0.0</span>
+                                            <i width="16px" data-lucide="saudi-riyal"></i>
                                         </p>
                                     </div>
                                     <div class="w-px bg-gray-200 self-stretch"></div>
                                     <div class="flex-1 min-w-0 px-5 py-4 text-right">
                                         <p class="text-sm text-gray-500 mb-1">إجمالي المدين (القبض)</p>
-                                        <p id="sum-deposit"
-                                            class="text-xl font-bold text-green-600 mono flex gap-2 items-center">
-                                            43,000.00
-                                            <i width="18px" data-lucide="saudi-riyal"></i>
+                                        <p class="text-xl font-bold text-green-600 mono flex gap-2 items-center">
+                                            <span id="sum-deposit">0.0</span>
+                                            <i width="16px" data-lucide="saudi-riyal"></i>
                                         </p>
                                     </div>
                                     <div class="w-px bg-gray-200 self-stretch"></div>
                                     <div class="flex-1 min-w-0 px-5 py-4 text-right">
                                         <p class="text-sm text-gray-500 mb-1">إجمالي الدائن (الصرف)</p>
-                                        <p id="sum-expense"
-                                            class="text-xl font-bold text-red-500 mono  flex gap-2 items-center">
-                                            18,800.00
-                                            <i width="18px" data-lucide="saudi-riyal"></i>
+                                        <p class="text-xl font-bold text-red-500 mono  flex gap-2 items-center">
+                                            <span id="sum-expense">0.0</span>
+                                            <i width="16px" data-lucide="saudi-riyal"></i>
                                         </p>
                                     </div>
                                 </div>
@@ -148,7 +140,7 @@
                             </select>
                             <div class="w-px h-5 bg-slate-200 flex-shrink-0"></div>
                             <button id="create-custody-btn"
-                                class="bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer">
+                                class="btn">
                                 <i class="w-5 h-5 m-0" data-lucide="plus"></i>
                                 <span>إنشاء عهدة</span>
                             </button>
@@ -201,48 +193,46 @@
                                     <div class="flex">
                                         <div class="flex-1 min-w-0 px-5 py-4 text-right">
                                             <p class="text-sm text-gray-500 mb-1.5">الرصيد المتبقي</p>
-                                            <p id="txn-sum-balance"
+                                            <p
                                                 class="text-2xl font-extrabold text-gray-600 mono leading-none flex gap-2 items-center">
-                                                0.00
-                                                <i width="18px" data-lucide="saudi-riyal"></i>
+                                                <span id="txn-sum-balance">0.00</span>
+                                                <i width="16px" data-lucide="saudi-riyal"></i>
                                             </p>
                                         </div>
                                         <div class="w-px bg-gray-200 self-stretch"></div>
                                         <div class="flex-1 min-w-0 px-5 py-4 text-right">
                                             <p class="text-sm text-gray-500 mb-1">إجمالي المدين (القبض)</p>
-                                            <p id="txn-sum-deposit"
-                                                class="text-xl font-bold text-green-600 mono flex gap-2 items-center">
-                                                0.00
-                                                <i width="18px" data-lucide="saudi-riyal"></i>
+                                            <p class="text-xl font-bold text-green-600 mono flex gap-2 items-center">
+                                                <span id="txn-sum-deposit">0.00</span>
+                                                <i width="16px" data-lucide="saudi-riyal"></i>
                                             </p>
                                         </div>
                                         <div class="w-px bg-gray-200 self-stretch"></div>
                                         <div class="flex-1 min-w-0 px-5 py-4 text-right">
                                             <p class="text-sm text-gray-500 mb-1">إجمالي الدائن (الصرف)</p>
-                                            <p id="txn-sum-expense"
-                                                class="text-xl font-bold text-[#fe3614] mono  flex gap-2 items-center">
-                                                0.00
-                                                <i width="18px" data-lucide="saudi-riyal"></i>
+                                            <p class="text-xl font-bold text-[#fe3614] mono  flex gap-2 items-center">
+                                                <span id="txn-sum-expense">0.00</span>
+                                                <i width="16px" data-lucide="saudi-riyal"></i>
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="flex w-full justify-between items-center gap-2.5 h-8 p-3">
+                            <div class="flex flex-wrap justify-between items-center gap-2.5 p-3 w-full">
                                 <div class="flex gap-2.5 items-center">
                                     <button id="txn-return"
-                                        class="bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer">
+                                        class="btn">
                                         <i class="w-5 h-5 m-0" data-lucide="square-arrow-right-exit"></i>
                                         <span>رجوع</span></button>
-                                    <h2 class="text-xl font-semibold text-gray-800">حركات العهدة</h2>
+                                    <h2 class="text-xl font-semibold text-gray-800 m-0">حركات العهدة</h2>
                                 </div>
 
                                 <div class="flex gap-1.5 items-center">
                                     <div id="txn-print-menu" class="relative w-fit">
                                         <button id="txn-print-btn" type="button" aria-expanded="false"
                                             aria-controls="txn-print-options"
-                                            class="bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer">
+                                            class="btn">
                                             <i class="w-5 h-5 m-0" data-lucide="printer"></i>
                                             <span>طباعة</span>
                                         </button>
@@ -262,12 +252,10 @@
                                         </div>
                                     </div>
                                     <div class="w-px h-5 mx-1 bg-slate-200 flex-shrink-0"></div>
-                                    <button id="txn-edit"
-                                        class="bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer">
+                                    <button id="txn-edit" class="btn">
                                         <i class="w-5 h-5 m-0" data-lucide="edit"></i>
                                         <span>تعديل</span></button>
-                                    <button id="crt-txn-open"
-                                        class="bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer">
+                                    <button id="crt-txn-open" class="btn">
                                         <i class="w-5 h-5 m-0" data-lucide="plus"></i>
                                         <span>إنشاء فاتورة</span>
                                     </button>
@@ -532,7 +520,8 @@
                         رجوع
                     </button>
                 </div>
-                <p id="displayname-status" role="status" aria-live="polite" class="text-sm text-gray-600 empty:hidden"></p>
+                <p id="displayname-status" role="status" aria-live="polite" class="text-sm text-gray-600 empty:hidden">
+                </p>
             </div>
         </div>
     </dialog>
@@ -782,14 +771,6 @@
             </div>
         </div>
     </div>
-    <!-- Supabase JS Client -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> -->
-    <!-- Export Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- Arabic font -->
-    <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.2.12/build/pdfmake.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.2.12/build/vfs_fonts.js"></script>
     <!-- App Scripts -->
     <script type="module" src="js/script.js"></script>
     <script type="module" src="js/login.js"></script>
@@ -798,7 +779,6 @@
     <script type="module" src="js/overlays.js"></script>
     <script type="module" src="js/createCustody.js"></script>
     <script type="module" src="js/createTransaction.js"></script>
-    <!-- <script src="script.js"></script> -->
 </body>
 
 </html>
