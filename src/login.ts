@@ -7,7 +7,7 @@ const loginPassword = document.getElementById('login-password') as HTMLInputElem
 const loginBtn = document.getElementById('login-btn')!;
 const loginMessage = document.getElementById('login-message')!;
 
-const listSec = document.getElementById('section-list')!;
+const appDiv = document.getElementById('app')!;
 
 const SUPABASE_URL = 'https://cwandpojkiljwqihjutj.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_aDVuZu2kdkpmqPaNUx7q2w_grXhjndk';
@@ -23,7 +23,7 @@ loginBtn.addEventListener('click', async () => {
         return;
     }
 
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
+    const { error } = await supabaseClient.auth.signInWithPassword({
         email: email,
         password: password
     })
@@ -46,12 +46,12 @@ loginForm.addEventListener('keydown', (event) => {
 
 function showApp() {
     loginForm.classList.add('hidden');
-    listSec.classList.remove('hidden');
+    appDiv.classList.remove('hidden');
     loadCustodies();
 }
 function showLogin() {
     loginForm.classList.remove('hidden');
-    listSec.classList.add('hidden');
+    appDiv.classList.add('hidden');
     profileMenu.classList.add('hidden');
 }
 
