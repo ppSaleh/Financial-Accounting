@@ -5,9 +5,38 @@ body {
 }
 
 
-.dot {
-    
+.dot {}
+
+.custodies-menu-header {
+    @apply flex items-center justify-between border-b border-gray-100 px-4 py-3 text-right text-sm font-normal text-gray-700;
 }
+
+.custodies-sort-row {
+    @apply flex min-h-9 items-center justify-between text-xs font-semibold hover:bg-slate-50;
+}
+.custodies-sort-row.active {
+    @apply bg-slate-100 text-slate-900 font-semibold;
+}
+.custodies-sort-directions {
+    @apply flex gap-1 pl-2;
+}
+.custodies-sort-direction {
+    @apply cursor-pointer rounded p-1.5 text-slate-500 hover:bg-slate-200 focus-visible:outline-2 focus-visible:outline-slate-500;
+}
+.custodies-sort-direction[aria-pressed="true"] {
+    @apply bg-slate-600 text-white;
+}
+@media (hover: hover) and (pointer: fine) {
+    .custodies-sort-directions { opacity: 0; }
+    .custodies-sort-row:hover .custodies-sort-directions,
+    .custodies-sort-row:focus-within .custodies-sort-directions,
+    .custodies-sort-row.active .custodies-sort-directions { opacity: 1; }
+}
+
+.custodies-filter-input {
+    @apply w-full min-w-0 rounded-md border border-gray-300 bg-white px-2 py-2 text-xs text-gray-700 outline-none focus:ring-2 focus:ring-emerald-500;
+}
+
 .btn {
     @apply bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex flex-shrink-0 items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer;
 }
@@ -17,7 +46,11 @@ body {
 }
 
 .btn-light {
+    @apply bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex flex-shrink-0 items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer;
+}
 
+.btn-icon {
+    @apply bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex flex-shrink-0 items-center h-8 p-2 rounded-md transition-colors cursor-pointer;
 }
 
 .row-btn {
@@ -32,3 +65,32 @@ body {
     @apply cursor-pointer bg-[#B37073] hover:bg-[#C79497] text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors
 }
 
+.skeleton {
+    width: 100%;
+    min-width: 3rem;
+    height: 1rem;
+    border-radius: 4px;
+
+    background: linear-gradient(90deg,
+            #e5e7eb 25%,
+            #f9fafb 50%,
+            #e5e7eb 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s linear infinite;
+}
+
+@keyframes shimmer {
+    from {
+        background-position: 200% 0;
+    }
+
+    to {
+        background-position: -200% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skeleton {
+        animation: none;
+    }
+}

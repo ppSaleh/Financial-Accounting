@@ -19,8 +19,10 @@ const editBtn = document.getElementById('txn-edit');
 const printBtn = document.getElementById('txn-print-btn');
 async function loadCustody(importedcustody) {
     activeCustody = importedcustody;
+    loadMeta();
+    showCustodyPulse();
     txns = await loadTransactionsForCustody(importedcustody.id);
-    await loadMeta(true);
+    await loadBalance(true);
     await renderCustody();
 }
 async function renderCustody() {
@@ -28,7 +30,16 @@ async function renderCustody() {
     receiptsArea.replaceChildren();
     receiptsTable.classList.add('hidden');
     if (txns.length === 0) {
-        body.innerHTML = 'NO TRANSACTIONS';
+        body.innerHTML = `<td colspan="8" class="p-4 text-center">
+                            <p>
+                                لا توجد عهد مسجلة حتى الآن،
+                                <a id="empty-custody" class="text-blue-500 font-bold underline cursor-pointer">أضف عهدة جديدة
+                                </a>
+                                للبدء.
+                            </p>
+                        </td>`;
+        const createTxnbtn = document.getElementById('crt-txn-open');
+        body.querySelector('#empty-custody')?.addEventListener('click', () => createTxnbtn.click());
         return;
     }
     const receiptPaths = [];
@@ -71,10 +82,27 @@ async function renderCustody() {
         toggleEditMode();
     loadRecipts();
 }
-async function loadMeta(forceRefresh = false) {
+function showCustodyPulse() {
+    summaryBalance.textContent = '0.00';
+    summaryTotalDeposit.textContent = '0.00';
+    summaryTotalExpense.textContent = '0.00';
+    body.innerHTML = `<tr>
+                            <td class="px-3 py-2"><div class="skeleton"></div></td>
+                            <td class="px-3 py-2"><div class="skeleton"></div></td>
+                            <td class="px-3 py-2"><div class="skeleton"></div></td>
+                            <td class="px-3 py-2"><div class="skeleton"></div></td>
+                            <td class="px-3 py-2"><div class="skeleton"></div></td>
+                            <td class="px-3 py-2"><div class="skeleton"></div></td>
+                            <td class="px-3 py-2"><div class="skeleton"></div></td>
+                        </tr>`;
+    receiptsTable.classList.add('hidden');
+}
+function loadMeta() {
     // id & details
     idLabel.textContent = activeCustody.id;
     detailsLabel.textContent = activeCustody.custodian + ' • ' + activeCustody.type;
+}
+async function loadBalance(forceRefresh = false) {
     // Summary section
     if (activeCustody.summary === undefined || forceRefresh) {
         const refreshedSummary = await getCustodySummary(activeCustody.id);
@@ -212,11 +240,8 @@ async function renderPdfPreview(url, img) {
 const receiptsTable = document.getElementById('custody-attachments-table');
 const receiptsArea = document.getElementById('custody-attachments');
 async function loadRecipts() {
-    const transactions = txns;
-    await attachReceiptUrls(transactions);
-    if (transactions !== txns)
-        return;
-    const txnsReceipts = transactions
+    await attachReceiptUrls(txns);
+    const txnsReceipts = txns
         .filter(t => t.doc_path !== null);
     if (txnsReceipts.length === 0) {
         receiptsTable.classList.add('hidden');

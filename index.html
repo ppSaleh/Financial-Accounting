@@ -79,10 +79,9 @@
         <div id="app">
 
             <!-- Table -->
-            <div id="custodies-table" class="hidden overflow-x-auto rounded-2xl border border-gray-200">
-                <table class="w-full text-sm border-collapse text-center">
+            <div id="custodies-table" class="rounded-2xl border border-gray-200">
                     <!-- Table Card -->
-                    <div class="bg-white overflow-hidden pl-2 pr-2 pb-3 border-b border-gray-200">
+                    <div class="relative z-20 bg-white rounded-t-2xl pl-2 pr-2 pb-3 border-b border-gray-200">
                         <div class="flex flex-wrap items-center justify-between">
                             <!-- Header -->
                             <div class="p-6">
@@ -125,27 +124,135 @@
                         <div class="flex w-full items-center gap-2.5 h-8 py-3">
                             <div
                                 class="flex-1 flex items-center h-8 pr-2 pl-3 border border-slate-200 rounded-md bg-slate-50 outline-none">
-                                <i data-lucide="search" class="ml-3 text-slate-600"></i>
-                                <input type="text" placeholder="بحث بالرمز أو المسؤول..."
-                                    class="flex-1 h-full placeholder-slate-500 text-slate-800">
+                                <i data-lucide="search" class=" h-4 text-slate-600"></i>
+                                <div class="w-px h-5 mx-2 bg-slate-300 flex-shrink-0"></div>
+                                <input id="custodies-search" type="search" aria-label="بحث بالرمز أو المسؤول" placeholder="بحث بالرمز أو المسؤول..."
+                                    class="flex-1 h-full placeholder-slate-500 text-slate-900">
                             </div>
-                            <select
-                                class="h-8 px-3 text-sm border border-slate-200 rounded-md bg-slate-50 outline-none text-slate-400 min-w-[130px]">
-                                <option value="">كل الأنواع</option>
-                                <option>مشتريات</option>
-                                <option>تشغيل وصيانة</option>
-                                <option>سفر وانتقالات</option>
-                                <option>إدارية</option>
-                                <option>طارئة</option>
-                            </select>
+                            <div id="custodies-filter-menu" class="relative">
+                                <button id="custodies-filter" type="button" class="btn-icon" aria-label="تصفية العهد"
+                                    aria-expanded="false" aria-controls="custodies-filter-panel">
+                                    <i class="h-5 w-5" data-lucide="filter"></i>
+                                </button>
+                                <form id="custodies-filter-panel" inert aria-labelledby="custodies-filter-title"
+                                    class="absolute left-0 top-full mt-2 w-80 max-w-[calc(100vw-3rem)] rounded-xl border border-gray-200 bg-white shadow-lg text-right
+                                    opacity-0 -translate-y-2 pointer-events-none transition-[opacity,transform] duration-200 ease-out">
+                                    <div class="custodies-menu-header">
+                                        <h2 id="custodies-filter-title" class="text-sm font-bold text-gray-700">تصفية العهد</h2>
+                                        <button id="custodies-filter-close" type="button" aria-label="إغلاق التصفية" class="cursor-pointer text-gray-400 hover:text-gray-700">
+                                            <i data-lucide="x" class="h-4 w-4"></i>
+                                        </button>
+                                    </div>
+                                    <div class="space-y-4 p-4">
+                                        <div>
+                                            <label for="custodies-filter-type" class="block mb-1.5 text-xs font-semibold text-gray-600">النوع</label>
+                                            <select id="custodies-filter-type" class="custodies-filter-input">
+                                                <option value="">كل الأنواع</option>
+                                                <option value="عهدة مشتريات">مشتريات</option>
+                                                <option value="عهدة تشغيل وصيانة">تشغيل وصيانة</option>
+                                                <option value="عهدة مصاريف سفر">سفر وانتقالات</option>
+                                                <option value="عهدة مكتبية وإدارية">إدارية</option>
+                                                <option value="عهدة طوارئ">طارئة</option>
+                                            </select>
+                                        </div>
+                                        <fieldset>
+                                            <legend class="mb-1.5 text-xs font-semibold text-gray-600">المبلغ المبدئي</legend>
+                                            <div class="flex items-center gap-2">
+                                                <input id="custodies-initial-min" type="number" step="any" placeholder="من" aria-label="المبلغ المبدئي من" class="custodies-filter-input">
+                                                <span class="text-gray-400">—</span>
+                                                <input id="custodies-initial-max" type="number" step="any" placeholder="إلى" aria-label="المبلغ المبدئي إلى" class="custodies-filter-input">
+                                            </div>
+                                        </fieldset>
+                                        <fieldset>
+                                            <legend class="mb-1.5 text-xs font-semibold text-gray-600">الرصيد المتبقي</legend>
+                                            <div class="flex items-center gap-2">
+                                                <input id="custodies-balance-min" type="number" step="any" placeholder="من" aria-label="الرصيد المتبقي من" class="custodies-filter-input">
+                                                <span class="text-gray-400">—</span>
+                                                <input id="custodies-balance-max" type="number" step="any" placeholder="إلى" aria-label="الرصيد المتبقي إلى" class="custodies-filter-input">
+                                            </div>
+                                        </fieldset>
+                                        <fieldset>
+                                            <legend class="mb-1.5 text-xs font-semibold text-gray-600">تاريخ الإنشاء</legend>
+                                            <div class="flex items-center gap-2">
+                                                <input id="custodies-date-min" type="date" aria-label="تاريخ الإنشاء من" class="custodies-filter-input" dir="ltr">
+                                                <span class="text-gray-400">—</span>
+                                                <input id="custodies-date-max" type="date" aria-label="تاريخ الإنشاء إلى" class="custodies-filter-input" dir="ltr">
+                                            </div>
+                                        </fieldset>
+                                        <button type="reset" class="w-full cursor-pointer rounded-md border border-gray-200 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50">إلغاء التصفية</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="custodies-sort-menu" class="relative">
+                                <button id="custodies-sort" type="button" class="btn-icon" aria-label="ترتيب العهد" aria-expanded="false" aria-controls="custodies-sort-panel">
+                                    <i class="h-5 w-5" data-lucide="arrow-down-up"></i>
+                                </button>
+                                <div id="custodies-sort-panel" inert aria-labelledby="custodies-sort-title"
+                                    class="absolute left-0 top-full mt-2 w-64 max-w-[calc(100vw-3rem)] rounded-xl border border-gray-200 bg-white shadow-lg text-right text-gray-700
+                                    opacity-0 -translate-y-2 pointer-events-none transition-[opacity,transform] duration-200 ease-out">
+                                    <div class="custodies-menu-header">
+                                        <h2 id="custodies-sort-title" class="text-sm font-bold text-gray-700">ترتيب حسب</h2>
+                                        <button id="custodies-sort-close" type="button" aria-label="إغلاق الترتيب" class="cursor-pointer text-gray-400 hover:text-gray-700">
+                                            <i data-lucide="x" class="h-4 w-4"></i>
+                                        </button>
+                                    </div>
+                                    <div class="custodies-sort-row" data-field="id">
+                                        <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer" data-sort="id" data-direction="desc">الرمز المرجعي</button>
+                                        <div class="custodies-sort-directions">
+                                            <button type="button" class="custodies-sort-direction" data-sort="id" data-direction="asc" aria-pressed="false" aria-label="الرمز المرجعي: A–Z" title="A–Z"><i data-lucide="arrow-down-a-z" class="h-4 w-4"></i></button>
+                                            <button type="button" class="custodies-sort-direction" data-sort="id" data-direction="desc" aria-pressed="false" aria-label="الرمز المرجعي: Z–A" title="Z–A"><i data-lucide="arrow-down-z-a" class="h-4 w-4"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="custodies-sort-row" data-field="custodian">
+                                        <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer" data-sort="custodian" data-direction="asc">المسؤول</button>
+                                        <div class="custodies-sort-directions">
+                                            <button type="button" class="custodies-sort-direction" data-sort="custodian" data-direction="asc" aria-pressed="false" aria-label="المسؤول: A–Z" title="A–Z"><i data-lucide="arrow-down-a-z" class="h-4 w-4"></i></button>
+                                            <button type="button" class="custodies-sort-direction" data-sort="custodian" data-direction="desc" aria-pressed="false" aria-label="المسؤول: Z–A" title="Z–A"><i data-lucide="arrow-down-z-a" class="h-4 w-4"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="custodies-sort-row" data-field="initial_funding">
+                                        <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer" data-sort="initial_funding" data-direction="asc">المبلغ المبدئي</button>
+                                        <div class="custodies-sort-directions">
+                                            <button type="button" class="custodies-sort-direction" data-sort="initial_funding" data-direction="asc" aria-pressed="false" aria-label="المبلغ المبدئي: الأقل أولاً" title="الأقل أولاً"><i data-lucide="arrow-down-0-1" class="h-4 w-4"></i></button>
+                                            <button type="button" class="custodies-sort-direction" data-sort="initial_funding" data-direction="desc" aria-pressed="false" aria-label="المبلغ المبدئي: الأعلى أولاً" title="الأعلى أولاً"><i data-lucide="arrow-down-1-0" class="h-4 w-4"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="custodies-sort-row" data-field="balance">
+                                        <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer" data-sort="balance" data-direction="asc">الرصيد المتبقي</button>
+                                        <div class="custodies-sort-directions">
+                                            <button type="button" class="custodies-sort-direction" data-sort="balance" data-direction="asc" aria-pressed="false" aria-label="الرصيد المتبقي: الأقل أولاً" title="الأقل أولاً"><i data-lucide="arrow-down-0-1" class="h-4 w-4"></i></button>
+                                            <button type="button" class="custodies-sort-direction" data-sort="balance" data-direction="desc" aria-pressed="false" aria-label="الرصيد المتبقي: الأعلى أولاً" title="الأعلى أولاً"><i data-lucide="arrow-down-1-0" class="h-4 w-4"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="custodies-sort-row" data-field="type">
+                                        <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer" data-sort="type" data-direction="asc">النوع</button>
+                                        <div class="custodies-sort-directions">
+                                            <button type="button" class="custodies-sort-direction" data-sort="type" data-direction="asc" aria-pressed="false" aria-label="النوع: A–Z" title="A–Z"><i data-lucide="arrow-down-a-z" class="h-4 w-4"></i></button>
+                                            <button type="button" class="custodies-sort-direction" data-sort="type" data-direction="desc" aria-pressed="false" aria-label="النوع: Z–A" title="Z–A"><i data-lucide="arrow-down-z-a" class="h-4 w-4"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="custodies-sort-row" data-field="created_at">
+                                        <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer" data-sort="created_at" data-direction="desc">تاريخ الإنشاء</button>
+                                        <div class="custodies-sort-directions">
+                                            <button type="button" class="custodies-sort-direction" data-sort="created_at" data-direction="asc" aria-pressed="false" aria-label="تاريخ الإنشاء: الأقدم أولاً" title="الأقدم أولاً"><i data-lucide="calendar-arrow-up" class="h-4 w-4"></i></button>
+                                            <button type="button" class="custodies-sort-direction" data-sort="created_at" data-direction="desc" aria-pressed="false" aria-label="تاريخ الإنشاء: الأحدث أولاً" title="الأحدث أولاً"><i data-lucide="calendar-arrow-down" class="h-4 w-4"></i></button>
+                                        </div>
+                                    </div>
+                                    <p id="custodies-sort-status" aria-live="polite" class="border-t border-gray-100 px-3 py-2 text-xs text-gray-500">اختر العمود واتجاه الترتيب</p>
+                                    <div class="px-3 pb-3">
+                                        <button id="custodies-sort-reset" type="button" class="w-full cursor-pointer rounded-md border border-gray-200 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50">إلغاء الترتيب</button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="w-px h-5 bg-slate-200 flex-shrink-0"></div>
-                            <button id="create-custody-btn"
-                                class="btn">
+                            <button id="create-custody-btn" class="btn">
                                 <i class="w-5 h-5 m-0" data-lucide="plus"></i>
                                 <span>إنشاء عهدة</span>
                             </button>
                         </div>
                     </div>
+                <div class="overflow-x-auto rounded-b-2xl">
+                <table class="w-full text-sm border-collapse text-center">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
@@ -170,8 +277,9 @@
 
                     </tbody>
                 </table>
+                </div>
             </div>
-            <div id="custody-table" class="flex flex-col gap-4">
+            <div id="custody-table" class="hidden flex flex-col gap-4">
                 <div class="overflow-x-auto rounded-2xl border border-gray-200">
                     <table class="w-full text-sm border-collapse text-center">
                         <!-- Table Card -->
@@ -221,8 +329,7 @@
 
                             <div class="flex flex-wrap justify-between items-center gap-2.5 p-3 w-full">
                                 <div class="flex gap-2.5 items-center">
-                                    <button id="txn-return"
-                                        class="btn">
+                                    <button id="txn-return" class="btn">
                                         <i class="w-5 h-5 m-0" data-lucide="square-arrow-right-exit"></i>
                                         <span>رجوع</span></button>
                                     <h2 class="text-xl font-semibold text-gray-800 m-0">حركات العهدة</h2>
@@ -231,8 +338,7 @@
                                 <div class="flex gap-1.5 items-center">
                                     <div id="txn-print-menu" class="relative w-fit">
                                         <button id="txn-print-btn" type="button" aria-expanded="false"
-                                            aria-controls="txn-print-options"
-                                            class="btn">
+                                            aria-controls="txn-print-options" class="btn">
                                             <i class="w-5 h-5 m-0" data-lucide="printer"></i>
                                             <span>طباعة</span>
                                         </button>
