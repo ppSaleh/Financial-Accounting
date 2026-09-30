@@ -6,7 +6,7 @@ const loginEmail = document.getElementById('login-email');
 const loginPassword = document.getElementById('login-password');
 const loginBtn = document.getElementById('login-btn');
 const loginMessage = document.getElementById('login-message');
-const custodiesTable = document.getElementById('custodies-table');
+const appDiv = document.getElementById('app');
 const SUPABASE_URL = 'https://cwandpojkiljwqihjutj.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_aDVuZu2kdkpmqPaNUx7q2w_grXhjndk';
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
@@ -38,12 +38,12 @@ loginForm.addEventListener('keydown', (event) => {
 });
 function showApp() {
     loginForm.classList.add('hidden');
-    custodiesTable.classList.remove('hidden');
+    appDiv.classList.remove('hidden');
     loadCustodies();
 }
 function showLogin() {
     loginForm.classList.remove('hidden');
-    custodiesTable.classList.add('hidden');
+    appDiv.classList.add('hidden');
     profileMenu.classList.add('hidden');
 }
 // Profile

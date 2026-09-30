@@ -1,11 +1,13 @@
 @import "tailwindcss";
 
+html {
+    scrollbar-color: gray #fff;
+}
+
 body {
     font-family: 'Tajawal', sans-serif;
 }
 
-
-.dot {}
 
 .custodies-menu-header {
     @apply flex items-center justify-between border-b border-gray-100 px-4 py-3 text-right text-sm font-normal text-gray-700;

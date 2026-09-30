@@ -1,5 +1,5 @@
 import pdfMake from "pdfmake/build/pdfmake";
-import logoUrl from '../logo.png';
+import logoUrl from '../images/favicon_500.png';
 // Existing local fonts cover Arabic custody names and descriptions.
 pdfMake.addFonts({
     Tajawal: {

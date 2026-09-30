@@ -1,5 +1,5 @@
 import pdfMake from "pdfmake/build/pdfmake";
-import logoUrl from '../logo.png';
+import logoUrl from '../images/favicon_500.png';
 import type { Content, ContentStack, ContentText, TDocumentDefinitions } from "pdfmake/interfaces";
 import type { Custody, FinancialSummary } from "./custodies";
 import type { Transaction } from "./custodyTransactions";
