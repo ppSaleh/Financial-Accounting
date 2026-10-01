@@ -1,19 +1,19 @@
-import { supabaseClient } from "./login";
+import { supabaseClient } from "./auth";
 import { loadCustodies } from "./custodies";
-const overlay = document.getElementById('create-custody-overlay');
-const overlayLayout = document.getElementById('create-custody-overlay-layout');
-const message = document.getElementById('create-custody-message');
-const createBtn = document.getElementById('create-custody-create');
-const cancelBtn = document.getElementById('create-custody-cancel');
-const idInput = document.getElementById('create-custody-id');
-const typeInput = document.getElementById('create-custody-type');
-const custodianInput = document.getElementById('create-custody-custodian');
-const initialFundingInput = document.getElementById('create-custody-initial-funding');
-const openBtn = document.getElementById('create-custody-btn');
-const fileInput = document.getElementById('create-custody-receipt');
-const fileName = document.getElementById('create-custody-file-name');
-const fileActions = document.getElementById('create-custody-file-actions');
-const dropZone = document.getElementById('create-custody-drop-zone');
+const overlay = document.getElementById('crt-cust-overlay');
+const overlayLayout = document.getElementById('crt-cust-overlay-layout');
+const message = document.getElementById('crt-cust-message');
+const createBtn = document.getElementById('crt-cust-create');
+const cancelBtn = document.getElementById('crt-cust-cancel');
+const idInput = document.getElementById('crt-cust-id');
+const typeInput = document.getElementById('crt-cust-type');
+const custodianInput = document.getElementById('crt-cust-custodian');
+const initialFundingInput = document.getElementById('crt-cust-initial-funding');
+const openBtn = document.getElementById('crt-cust-btn');
+const fileInput = document.getElementById('crt-cust-receipt');
+const fileName = document.getElementById('crt-cust-file-name');
+const fileActions = document.getElementById('crt-cust-file-actions');
+const dropZone = document.getElementById('crt-cust-drop-zone');
 let selectedFile = null;
 let selectedFileUrl;
 let dragDepth = 0;
@@ -49,13 +49,13 @@ function selectFile(file) {
     message.classList = 'hidden';
 }
 fileInput.addEventListener('change', () => selectFile(fileInput.files?.[0]));
-document.getElementById('create-custody-clear-file').addEventListener('click', () => {
+document.getElementById('crt-cust-clear-file').addEventListener('click', () => {
     if (isSaving)
         return;
     clearSelectedFile();
     fileInput.focus();
 });
-document.getElementById('create-custody-view-file').addEventListener('click', () => {
+document.getElementById('crt-cust-view-file').addEventListener('click', () => {
     if (!selectedFile)
         return;
     if (selectedFileUrl)
@@ -151,7 +151,7 @@ createBtn.addEventListener('click', async () => {
         return;
     }
     isSaving = true;
-    const controls = Array.from(document.querySelectorAll('#create-custody-form input, #create-custody-form select, #create-custody-form button'));
+    const controls = Array.from(document.querySelectorAll('#crt-cust-form input, #crt-cust-form select, #crt-cust-form button'));
     controls.forEach(control => { control.disabled = true; });
     try {
         const created = await createCustodyWithOpeningTransaction(id, custodian, type, initialFunding, selectedFile ?? undefined);

@@ -1,7 +1,7 @@
 // Owns the custody toolbar's search, filter and sort state and event handlers.
 // Read the latest records on each update; render through the existing table renderer.
 export function initCustodySearch(getCustodies, renderCustodies) {
-    const custodiesBody = document.getElementById('custody-body');
+    const custodiesBody = document.getElementById('custodies-body');
     // Custody filters
     const custodySearch = document.getElementById('custodies-search');
     custodySearch.addEventListener('input', applyCustodyFilters);

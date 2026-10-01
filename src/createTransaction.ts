@@ -1,5 +1,5 @@
 import { activeCustody, loadCustody, Transaction } from "./custodyTransactions"
-import { supabaseClient } from "./login"
+import { supabaseClient } from "./auth"
 
 
 interface CreateTransactionParams {
@@ -321,7 +321,7 @@ form.addEventListener('submit', async (event) => {
   submitButton.disabled = true
   form.inert = true
   try {
-    form.dispatchEvent(new CustomEvent(txn ? 'crt-txn-edit' : 'crt-txn-create', {
+    form.dispatchEvent(new CustomEvent(txn ? 'crt-custody-edit' : 'crt-txn-create', {
       bubbles: true,
       detail: txn ? { ...detail, id: txn.id } : detail,
     }))

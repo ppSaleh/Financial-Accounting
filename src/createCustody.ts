@@ -1,22 +1,22 @@
-import { supabaseClient } from "./login";
+import { supabaseClient } from "./auth";
 import { Custody, loadCustodies } from "./custodies";
 
-const overlay = document.getElementById('create-custody-overlay') as HTMLDialogElement;
-const overlayLayout = document.getElementById('create-custody-overlay-layout')!;
-const message = document.getElementById('create-custody-message')!;
+const overlay = document.getElementById('crt-cust-overlay') as HTMLDialogElement;
+const overlayLayout = document.getElementById('crt-cust-overlay-layout')!;
+const message = document.getElementById('crt-cust-message')!;
 
-const createBtn = document.getElementById('create-custody-create')!;
-const cancelBtn = document.getElementById('create-custody-cancel')!;
-const idInput = document.getElementById('create-custody-id') as HTMLInputElement;
-const typeInput = document.getElementById('create-custody-type') as HTMLInputElement;
-const custodianInput = document.getElementById('create-custody-custodian') as HTMLInputElement;
-const initialFundingInput = document.getElementById('create-custody-initial-funding') as HTMLInputElement;
+const createBtn = document.getElementById('crt-cust-create')!;
+const cancelBtn = document.getElementById('crt-cust-cancel')!;
+const idInput = document.getElementById('crt-cust-id') as HTMLInputElement;
+const typeInput = document.getElementById('crt-cust-type') as HTMLInputElement;
+const custodianInput = document.getElementById('crt-cust-custodian') as HTMLInputElement;
+const initialFundingInput = document.getElementById('crt-cust-initial-funding') as HTMLInputElement;
 
-const openBtn = document.getElementById('create-custody-btn')!;
-const fileInput = document.getElementById('create-custody-receipt') as HTMLInputElement;
-const fileName = document.getElementById('create-custody-file-name')!;
-const fileActions = document.getElementById('create-custody-file-actions')!;
-const dropZone = document.getElementById('create-custody-drop-zone')!;
+const openBtn = document.getElementById('crt-cust-btn')!;
+const fileInput = document.getElementById('crt-cust-receipt') as HTMLInputElement;
+const fileName = document.getElementById('crt-cust-file-name')!;
+const fileActions = document.getElementById('crt-cust-file-actions')!;
+const dropZone = document.getElementById('crt-cust-drop-zone')!;
 let selectedFile: File | null = null;
 let selectedFileUrl: string | undefined;
 let dragDepth = 0;
@@ -53,12 +53,12 @@ function selectFile(file: File | undefined) {
 }
 
 fileInput.addEventListener('change', () => selectFile(fileInput.files?.[0]));
-document.getElementById('create-custody-clear-file')!.addEventListener('click', () => {
+document.getElementById('crt-cust-clear-file')!.addEventListener('click', () => {
     if (isSaving) return;
     clearSelectedFile();
     fileInput.focus();
 });
-document.getElementById('create-custody-view-file')!.addEventListener('click', () => {
+document.getElementById('crt-cust-view-file')!.addEventListener('click', () => {
     if (!selectedFile) return;
     if (selectedFileUrl) URL.revokeObjectURL(selectedFileUrl);
     selectedFileUrl = URL.createObjectURL(selectedFile);
@@ -178,7 +178,7 @@ createBtn.addEventListener('click', async () => {
 
     isSaving = true;
     const controls = Array.from(document.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLButtonElement>(
-        '#create-custody-form input, #create-custody-form select, #create-custody-form button'
+        '#crt-cust-form input, #crt-cust-form select, #crt-cust-form button'
     ));
     controls.forEach(control => { control.disabled = true; });
     try {

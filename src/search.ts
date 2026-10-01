@@ -6,7 +6,7 @@ export function initCustodySearch(
     getCustodies: () => Record<string, Custody>,
     renderCustodies: (rows: Custody[]) => void,
 ): () => void {
-    const custodiesBody = document.getElementById('custody-body')!;
+    const custodiesBody = document.getElementById('custodies-body')!;
 
     // Custody filters
     const custodySearch = document.getElementById('custodies-search') as HTMLInputElement;

@@ -1,5 +1,5 @@
 import { custodies, formatDateDDMMYYYY, formatReceiptDate, switchTable } from "./custodies";
-import { supabaseClient } from "./login";
+import { supabaseClient } from "./auth";
 import { openEdit } from "./createTransaction";
 import { confirmAction } from "./overlays";
 export { loadCustody, activeCustody };
@@ -7,16 +7,16 @@ let activeCustody;
 let txns;
 const riyalsSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="saudi-riyal" aria-hidden="true" class="lucide lucide-saudi-riyal"><path d="m20 19.5-5.5 1.2"></path><path d="M14.5 4v11.22a1 1 0 0 0 1.242.97L20 15.2"></path><path d="m2.978 19.351 5.549-1.363A2 2 0 0 0 10 16V2"></path><path d="M20 10 4 13.5"></path></svg>';
 const riyalsSVGsmol = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="saudi-riyal" aria-hidden="true" class="h-3.5 w-3.5 lucide lucide-saudi-riyal"><path d="m20 19.5-5.5 1.2"></path><path d="M14.5 4v11.22a1 1 0 0 0 1.242.97L20 15.2"></path><path d="m2.978 19.351 5.549-1.363A2 2 0 0 0 10 16V2"></path><path d="M20 10 4 13.5"></path></svg>';
-const body = document.getElementById('txn-body');
-const summaryBalance = document.getElementById('txn-sum-balance');
-const summaryTotalDeposit = document.getElementById('txn-sum-deposit');
-const summaryTotalExpense = document.getElementById('txn-sum-expense');
+const body = document.getElementById('custody-body');
+const summaryBalance = document.getElementById('custody-sum-balance');
+const summaryTotalDeposit = document.getElementById('custody-sum-deposit');
+const summaryTotalExpense = document.getElementById('custody-sum-expense');
 const idLabel = document.getElementById('custody-id');
 const detailsLabel = document.getElementById('custody-details');
 const crtForm = document.getElementById('crt-txn-form');
-const returnBtn = document.getElementById('txn-return');
-const editBtn = document.getElementById('txn-edit');
-const printBtn = document.getElementById('txn-print-btn');
+const returnBtn = document.getElementById('custody-return');
+const editBtn = document.getElementById('custody-edit');
+const printBtn = document.getElementById('custody-print-btn');
 async function loadCustody(importedcustody) {
     activeCustody = importedcustody;
     loadMeta();
@@ -69,7 +69,7 @@ async function renderCustody() {
                                 <span class="flex items-center justify-end gap-1 ml-4">${txn.expense === 0 ? '—' : (txn.expense.toFixed(2) + riyalsSVG)}</span>
                             </td>
                             <td class="px-4 py-3 mono text-left font-bold text-[#76797D]">
-                                <span class="flex items-center justify-end gap-1 ml-4">${txn.running_balance}${riyalsSVG}</span>
+                                <span class="flex items-center justify-end gap-1 ml-4">${txn.running_balance?.toFixed(2) ?? '—'}${riyalsSVG}</span>
                             </td>
                         </tr>`;
         row.querySelector('.view-img')?.addEventListener('click', () => viewReceipt(txn));

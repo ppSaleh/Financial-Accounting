@@ -27,7 +27,7 @@ function renderApp() {
 }
 
 // --- إنشاء حساب عهدة جديد ---
-document.getElementById('create-custody-form').addEventListener('submit', async function (e) {
+document.getElementById('crt-cust-form').addEventListener('submit', async function (e) {
     e.preventDefault();
     const code = document.getElementById('new-code').value.trim();
     const type = document.getElementById('new-type').value;

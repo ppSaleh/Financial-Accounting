@@ -283,9 +283,9 @@ async function initSession() {
     const { data: { session } } = await supabaseClient.auth.getSession()
 
     if (session) {
+        showApp()
         profile = await fetchProfile(session.user.id)
         buildprofile();
-        showApp()
     } else {
         showLogin()
     }

@@ -1,6 +1,6 @@
 import { initCustodySearch } from './search';
 import { loadCustody, Transaction } from "./custodyTransactions"
-import { isSupervisor, supabaseClient } from "./login"
+import { isSupervisor, supabaseClient } from "./auth"
 
 export { Custody, loadCustodies, custodies, formatDateDDMMYYYY, FinancialSummary, switchTable }
 
@@ -24,7 +24,7 @@ let custodies: Record<string, Custody> = {};
 
 const riyalsSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="saudi-riyal" aria-hidden="true" class="lucide lucide-saudi-riyal"><path d="m20 19.5-5.5 1.2"></path><path d="M14.5 4v11.22a1 1 0 0 0 1.242.97L20 15.2"></path><path d="m2.978 19.351 5.549-1.363A2 2 0 0 0 10 16V2"></path><path d="M20 10 4 13.5"></path></svg>';
 const custodiesTable = document.getElementById('custodies-table')!;
-const custodiesBody = document.getElementById('custody-body')!;
+const custodiesBody = document.getElementById('custodies-body')!;
 const custodyTable = document.getElementById('custody-table')!;
 
 // Keep search, filter and sort controls together in search.ts.
@@ -64,7 +64,7 @@ function renderCustodies(custodies: Custody[]) {
                                 للبدء.
                             </p>
                         </td>`;
-        const createCustodybtn = document.getElementById('create-custody-btn')!;
+        const createCustodybtn = document.getElementById('crt-cust-btn')!;
         custodiesBody.querySelector('#empty-custodies')?.addEventListener('click', () => createCustodybtn.click());
         return;
     }

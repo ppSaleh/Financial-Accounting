@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة العهد والسلف المالية</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="images/favicon.png"/>
+    <link rel="icon" type="image/png" href="images/favicon.png" />
     <link rel="stylesheet" href="styling.css">
 </head>
 
@@ -26,10 +26,10 @@
                     <p class="text-xs text-gray-500 mt-0.5">Financial Accounting System</p>
                 </div>
             </div>
-            <div id="profile-menu" class="relative w-fit">
+            <div id="profile-menu" class="hidden relative w-fit">
                 <button id="profile-toggle" type="button" aria-expanded="false" class="bg-gray-100 flex gap-3 p-3 rounded-2xl items-center
                    select-none hover:bg-gray-200 cursor-pointer min-w-40 justify-between">
-                    <span id="display-name">صالح محمد</span>
+                    <span id="display-name"></span>
                     <i data-lucide="chevron-down"></i>
                 </button>
 
@@ -39,7 +39,7 @@
                 transition-[opacity,transform] duration-200 ease-out">
                     <span id="profile-change-displayname" class="select-none p-3 w-full rounded hover:bg-gray-200">تغيير
                         اسم العرض</span>
-                    <span id="profile-role" class="select-none p-3 w-full rounded hover:bg-gray-200">الرتبة: موظف</span>
+                    <span id="profile-role" class="select-none p-3 w-full rounded hover:bg-gray-200">الرتبة: </span>
                     <span id="profile-logout" class="select-none p-3 w-full rounded hover:bg-gray-200">تسجيل خروج</span>
                 </div>
             </div>
@@ -81,16 +81,283 @@
 
             <!-- Table -->
             <div id="custodies-table" class="rounded-2xl border border-gray-200">
-                    <!-- Table Card -->
-                    <div class="relative z-20 bg-white rounded-t-2xl pl-2 pr-2 pb-3 border-b border-gray-200">
-                        <div class="flex flex-wrap items-center justify-between">
-                            <!-- Header -->
-                            <div class="p-6">
-                                <h1 class="text-3xl font-semibold text-gray-800">سجل العهد المالية</h1>
-                                <p class="text-l text-gray-500 mt-0.5">إدارة العُهد المالية ومتابعة أرصدتها
-                                </p>
-                            </div>
+                <div class="relative z-20 bg-white rounded-t-2xl pl-2 pr-2 pb-3 border-b border-gray-200">
+                    <!-- Header -->
+                    <div class="flex flex-wrap items-center justify-between">
+                        <div class="p-6">
+                            <h1 class="text-3xl font-semibold text-gray-800">سجل العهد المالية</h1>
+                            <p class="text-l text-gray-500 mt-0.5">إدارة العُهد المالية ومتابعة أرصدتها</p>
+                        </div>
 
+                        <div class="min-w-[600px] bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
+                            <div class="flex">
+                                <div class="flex-1 min-w-0 px-5 py-4 text-right">
+                                    <p class="text-sm text-gray-500 mb-1.5">الرصيد المتبقي</p>
+                                    <p
+                                        class="text-2xl font-extrabold text-gray-600 mono leading-none flex gap-2 items-center">
+                                        <span id="sum-balance">0.0</span>
+                                        <i width="16px" data-lucide="saudi-riyal"></i>
+                                    </p>
+                                </div>
+                                <div class="w-px bg-gray-200 self-stretch"></div>
+                                <div class="flex-1 min-w-0 px-5 py-4 text-right">
+                                    <p class="text-sm text-gray-500 mb-1">إجمالي المدين (القبض)</p>
+                                    <p class="text-xl font-bold text-green-600 mono flex gap-2 items-center">
+                                        <span id="sum-deposit">0.0</span>
+                                        <i width="16px" data-lucide="saudi-riyal"></i>
+                                    </p>
+                                </div>
+                                <div class="w-px bg-gray-200 self-stretch"></div>
+                                <div class="flex-1 min-w-0 px-5 py-4 text-right">
+                                    <p class="text-sm text-gray-500 mb-1">إجمالي الدائن (الصرف)</p>
+                                    <p class="text-xl font-bold text-red-500 mono  flex gap-2 items-center">
+                                        <span id="sum-expense">0.0</span>
+                                        <i width="16px" data-lucide="saudi-riyal"></i>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Search elements -->
+                    <div class="flex w-full items-center gap-2.5 h-8 py-3">
+                        <div
+                            class="flex-1 flex items-center h-8 pr-2 pl-3 border border-slate-200 rounded-md bg-slate-50 outline-none">
+                            <i data-lucide="search" class=" h-4 text-slate-600"></i>
+                            <div class="w-px h-5 mx-2 bg-slate-300 flex-shrink-0"></div>
+                            <!-- search.ts: live search by Custody.id or Custody.custodian -->
+                            <input id="custodies-search" type="search" aria-label="بحث بالرمز أو المسؤول"
+                                placeholder="بحث بالرمز أو المسؤول..."
+                                class="flex-1 h-full placeholder-slate-500 text-slate-900">
+                        </div>
+                        <!-- search.ts: filter trigger, panel, ranges, type and reset -->
+                        <div id="custodies-filter-menu" class="relative">
+                            <button id="custodies-filter" type="button" class="btn-icon" aria-label="تصفية العهد"
+                                aria-expanded="false" aria-controls="custodies-filter-panel">
+                                <i class="h-5 w-5" data-lucide="filter"></i>
+                            </button>
+                            <form id="custodies-filter-panel" inert aria-labelledby="custodies-filter-title" class="absolute left-0 top-full mt-2 w-80 max-w-[calc(100vw-3rem)] rounded-xl border border-gray-200 bg-white shadow-lg text-right
+                opacity-0 -translate-y-2 pointer-events-none transition-[opacity,transform] duration-200 ease-out">
+                                <div class="custodies-menu-header">
+                                    <h2 id="custodies-filter-title" class="text-sm font-bold text-gray-700">تصفية العهد
+                                    </h2>
+                                    <button id="custodies-filter-close" type="button" aria-label="إغلاق التصفية"
+                                        class="cursor-pointer text-gray-400 hover:text-gray-700">
+                                        <i data-lucide="x" class="h-4 w-4"></i>
+                                    </button>
+                                </div>
+                                <div class="space-y-4 p-4">
+                                    <div>
+                                        <label for="custodies-filter-type"
+                                            class="block mb-1.5 text-xs font-semibold text-gray-600">النوع</label>
+                                        <select id="custodies-filter-type" class="custodies-filter-input">
+                                            <option value="">كل الأنواع</option>
+                                            <option value="عهدة مشتريات">مشتريات</option>
+                                            <option value="عهدة تشغيل وصيانة">تشغيل وصيانة</option>
+                                            <option value="عهدة مصاريف سفر">سفر وانتقالات</option>
+                                            <option value="عهدة مكتبية وإدارية">إدارية</option>
+                                            <option value="عهدة طوارئ">طارئة</option>
+                                        </select>
+                                    </div>
+                                    <fieldset>
+                                        <legend class="mb-1.5 text-xs font-semibold text-gray-600">المبلغ المبدئي
+                                        </legend>
+                                        <div class="flex items-center gap-2">
+                                            <input id="custodies-initial-min" type="number" step="any" placeholder="من"
+                                                aria-label="المبلغ المبدئي من" class="custodies-filter-input">
+                                            <span class="text-gray-400">—</span>
+                                            <input id="custodies-initial-max" type="number" step="any" placeholder="إلى"
+                                                aria-label="المبلغ المبدئي إلى" class="custodies-filter-input">
+                                        </div>
+                                    </fieldset>
+                                    <fieldset>
+                                        <legend class="mb-1.5 text-xs font-semibold text-gray-600">الرصيد المتبقي
+                                        </legend>
+                                        <div class="flex items-center gap-2">
+                                            <input id="custodies-balance-min" type="number" step="any" placeholder="من"
+                                                aria-label="الرصيد المتبقي من" class="custodies-filter-input">
+                                            <span class="text-gray-400">—</span>
+                                            <input id="custodies-balance-max" type="number" step="any" placeholder="إلى"
+                                                aria-label="الرصيد المتبقي إلى" class="custodies-filter-input">
+                                        </div>
+                                    </fieldset>
+                                    <fieldset>
+                                        <legend class="mb-1.5 text-xs font-semibold text-gray-600">تاريخ الإنشاء
+                                        </legend>
+                                        <div class="flex items-center gap-2">
+                                            <input id="custodies-date-min" type="date" aria-label="تاريخ الإنشاء من"
+                                                class="custodies-filter-input" dir="ltr">
+                                            <span class="text-gray-400">—</span>
+                                            <input id="custodies-date-max" type="date" aria-label="تاريخ الإنشاء إلى"
+                                                class="custodies-filter-input" dir="ltr">
+                                        </div>
+                                    </fieldset>
+                                    <button type="reset"
+                                        class="w-full cursor-pointer rounded-md border border-gray-200 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50">إلغاء
+                                        التصفية</button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- search.ts: sort trigger, panel, directions and reset -->
+                        <div id="custodies-sort-menu" class="relative">
+                            <button id="custodies-sort" type="button" class="btn-icon" aria-label="ترتيب العهد"
+                                aria-expanded="false" aria-controls="custodies-sort-panel">
+                                <i class="h-5 w-5" data-lucide="arrow-down-up"></i>
+                            </button>
+                            <div id="custodies-sort-panel" inert aria-labelledby="custodies-sort-title" class="absolute left-0 top-full mt-2 w-64 max-w-[calc(100vw-3rem)] rounded-xl border border-gray-200 bg-white shadow-lg text-right text-gray-700
+    opacity-0 -translate-y-2 pointer-events-none transition-[opacity,transform] duration-200 ease-out">
+                                <div class="custodies-menu-header">
+                                    <h2 id="custodies-sort-title" class="text-sm font-bold text-gray-700">ترتيب حسب</h2>
+                                    <button id="custodies-sort-close" type="button" aria-label="إغلاق الترتيب"
+                                        class="cursor-pointer text-gray-400 hover:text-gray-700">
+                                        <i data-lucide="x" class="h-4 w-4"></i>
+                                    </button>
+                                </div>
+                                <div class="custodies-sort-row" data-field="id">
+                                    <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer"
+                                        data-sort="id" data-direction="desc">الرمز المرجعي</button>
+                                    <div class="custodies-sort-directions">
+                                        <button type="button" class="custodies-sort-direction" data-sort="id"
+                                            data-direction="asc" aria-pressed="false" aria-label="الرمز المرجعي: A–Z"
+                                            title="A–Z"><i data-lucide="arrow-down-a-z" class="h-4 w-4"></i></button>
+                                        <button type="button" class="custodies-sort-direction" data-sort="id"
+                                            data-direction="desc" aria-pressed="false" aria-label="الرمز المرجعي: Z–A"
+                                            title="Z–A"><i data-lucide="arrow-down-z-a" class="h-4 w-4"></i></button>
+                                    </div>
+                                </div>
+                                <div class="custodies-sort-row" data-field="custodian">
+                                    <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer"
+                                        data-sort="custodian" data-direction="asc">المسؤول</button>
+                                    <div class="custodies-sort-directions">
+                                        <button type="button" class="custodies-sort-direction" data-sort="custodian"
+                                            data-direction="asc" aria-pressed="false" aria-label="المسؤول: A–Z"
+                                            title="A–Z"><i data-lucide="arrow-down-a-z" class="h-4 w-4"></i></button>
+                                        <button type="button" class="custodies-sort-direction" data-sort="custodian"
+                                            data-direction="desc" aria-pressed="false" aria-label="المسؤول: Z–A"
+                                            title="Z–A"><i data-lucide="arrow-down-z-a" class="h-4 w-4"></i></button>
+                                    </div>
+                                </div>
+                                <div class="custodies-sort-row" data-field="initial_funding">
+                                    <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer"
+                                        data-sort="initial_funding" data-direction="asc">المبلغ المبدئي</button>
+                                    <div class="custodies-sort-directions">
+                                        <button type="button" class="custodies-sort-direction"
+                                            data-sort="initial_funding" data-direction="asc" aria-pressed="false"
+                                            aria-label="المبلغ المبدئي: الأقل أولاً" title="الأقل أولاً"><i
+                                                data-lucide="arrow-down-0-1" class="h-4 w-4"></i></button>
+                                        <button type="button" class="custodies-sort-direction"
+                                            data-sort="initial_funding" data-direction="desc" aria-pressed="false"
+                                            aria-label="المبلغ المبدئي: الأعلى أولاً" title="الأعلى أولاً"><i
+                                                data-lucide="arrow-down-1-0" class="h-4 w-4"></i></button>
+                                    </div>
+                                </div>
+                                <div class="custodies-sort-row" data-field="balance">
+                                    <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer"
+                                        data-sort="balance" data-direction="asc">الرصيد المتبقي</button>
+                                    <div class="custodies-sort-directions">
+                                        <button type="button" class="custodies-sort-direction" data-sort="balance"
+                                            data-direction="asc" aria-pressed="false"
+                                            aria-label="الرصيد المتبقي: الأقل أولاً" title="الأقل أولاً"><i
+                                                data-lucide="arrow-down-0-1" class="h-4 w-4"></i></button>
+                                        <button type="button" class="custodies-sort-direction" data-sort="balance"
+                                            data-direction="desc" aria-pressed="false"
+                                            aria-label="الرصيد المتبقي: الأعلى أولاً" title="الأعلى أولاً"><i
+                                                data-lucide="arrow-down-1-0" class="h-4 w-4"></i></button>
+                                    </div>
+                                </div>
+                                <div class="custodies-sort-row" data-field="type">
+                                    <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer"
+                                        data-sort="type" data-direction="asc">النوع</button>
+                                    <div class="custodies-sort-directions">
+                                        <button type="button" class="custodies-sort-direction" data-sort="type"
+                                            data-direction="asc" aria-pressed="false" aria-label="النوع: A–Z"
+                                            title="A–Z"><i data-lucide="arrow-down-a-z" class="h-4 w-4"></i></button>
+                                        <button type="button" class="custodies-sort-direction" data-sort="type"
+                                            data-direction="desc" aria-pressed="false" aria-label="النوع: Z–A"
+                                            title="Z–A"><i data-lucide="arrow-down-z-a" class="h-4 w-4"></i></button>
+                                    </div>
+                                </div>
+                                <div class="custodies-sort-row" data-field="created_at">
+                                    <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer"
+                                        data-sort="created_at" data-direction="desc">تاريخ الإنشاء</button>
+                                    <div class="custodies-sort-directions">
+                                        <button type="button" class="custodies-sort-direction" data-sort="created_at"
+                                            data-direction="asc" aria-pressed="false"
+                                            aria-label="تاريخ الإنشاء: الأقدم أولاً" title="الأقدم أولاً"><i
+                                                data-lucide="calendar-arrow-up" class="h-4 w-4"></i></button>
+                                        <button type="button" class="custodies-sort-direction" data-sort="created_at"
+                                            data-direction="desc" aria-pressed="false"
+                                            aria-label="تاريخ الإنشاء: الأحدث أولاً" title="الأحدث أولاً"><i
+                                                data-lucide="calendar-arrow-down" class="h-4 w-4"></i></button>
+                                    </div>
+                                </div>
+                                <p id="custodies-sort-status" aria-live="polite"
+                                    class="border-t border-gray-100 px-3 py-2 text-xs text-gray-500">اختر العمود واتجاه
+                                    الترتيب</p>
+                                <div class="px-3 pb-3">
+                                    <button id="custodies-sort-reset" type="button"
+                                        class="w-full cursor-pointer rounded-md border border-gray-200 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50">إلغاء
+                                        الترتيب</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-px h-5 bg-slate-200 flex-shrink-0"></div>
+                        <button id="crt-cust-btn" class="btn">
+                            <i class="w-5 h-5" data-lucide="plus"></i>
+                            <span>إنشاء عهدة</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Table Card -->
+                <div class="overflow-x-auto rounded-b-2xl">
+                    <table class="w-full text-sm border-collapse text-center">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th
+                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
+                                    #</th>
+                                <th
+                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
+                                    الرمز المرجعي</th>
+                                <th
+                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
+                                    المسؤول</th>
+                                <th
+                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
+                                    المبلغ المبدئي</th>
+                                <th
+                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
+                                    الرصيد المتبقي</th>
+                                <th
+                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
+                                    النوع</th>
+                                <th
+                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
+                                    تاريخ الإنشاء</th>
+                                <th
+                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
+                                    الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="custodies-body" class="bg-white">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="custody-table" class="hidden">
+                <div class="border border-gray-200">
+                    <!-- Header -->
+                    <div class="rounded-t-2xl relative z-20 bg-white pl-2 pr-2 pb-3">
+                        <div class="flex flex-wrap items-center justify-between">
+                            <div class="p-6">
+                                <div class="flex items-center gap-2">
+                                    <h1 class="text-2xl font-semibold text-gray-800">تفاصيل العهدة:</h1>
+                                    <span id="custody-id" class="text-xl font-semibold text-slate-600">
+                                        FRT-2026-001</span>
+                                </div>
+                                <p id="custody-details" class="text-gray-700 mt-0.5">صالح عبدالله محمد - عهدة
+                                    مشتريات</p>
+                            </div>
 
                             <div class="min-w-[600px] bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
                                 <div class="flex">
@@ -98,7 +365,7 @@
                                         <p class="text-sm text-gray-500 mb-1.5">الرصيد المتبقي</p>
                                         <p
                                             class="text-2xl font-extrabold text-gray-600 mono leading-none flex gap-2 items-center">
-                                            <span id="sum-balance">0.0</span>
+                                            <span id="custody-sum-balance">0.00</span>
                                             <i width="16px" data-lucide="saudi-riyal"></i>
                                         </p>
                                     </div>
@@ -106,15 +373,15 @@
                                     <div class="flex-1 min-w-0 px-5 py-4 text-right">
                                         <p class="text-sm text-gray-500 mb-1">إجمالي المدين (القبض)</p>
                                         <p class="text-xl font-bold text-green-600 mono flex gap-2 items-center">
-                                            <span id="sum-deposit">0.0</span>
+                                            <span id="custody-sum-deposit">0.00</span>
                                             <i width="16px" data-lucide="saudi-riyal"></i>
                                         </p>
                                     </div>
                                     <div class="w-px bg-gray-200 self-stretch"></div>
                                     <div class="flex-1 min-w-0 px-5 py-4 text-right">
                                         <p class="text-sm text-gray-500 mb-1">إجمالي الدائن (الصرف)</p>
-                                        <p class="text-xl font-bold text-red-500 mono  flex gap-2 items-center">
-                                            <span id="sum-expense">0.0</span>
+                                        <p class="text-xl font-bold text-[#fe3614] mono  flex gap-2 items-center">
+                                            <span id="custody-sum-expense">0.00</span>
                                             <i width="16px" data-lucide="saudi-riyal"></i>
                                         </p>
                                     </div>
@@ -122,354 +389,150 @@
                             </div>
                         </div>
 
-                        <div class="flex w-full items-center gap-2.5 h-8 py-3">
-                            <div
-                                class="flex-1 flex items-center h-8 pr-2 pl-3 border border-slate-200 rounded-md bg-slate-50 outline-none">
-                                <i data-lucide="search" class=" h-4 text-slate-600"></i>
-                                <div class="w-px h-5 mx-2 bg-slate-300 flex-shrink-0"></div>
-                                <!-- search.ts: live search by Custody.id or Custody.custodian -->
-                                <input id="custodies-search" type="search" aria-label="بحث بالرمز أو المسؤول" placeholder="بحث بالرمز أو المسؤول..."
-                                    class="flex-1 h-full placeholder-slate-500 text-slate-900">
+                        <div class="flex flex-wrap justify-between items-center gap-2.5 w-full">
+                            <div class="flex gap-2.5 items-center">
+                                <button id="custody-return" class="btn">
+                                    <i class="w-5 h-5" data-lucide="square-arrow-right-exit"></i>
+                                    <span>رجوع</span></button>
+                                <h2 class="text-xl font-semibold text-gray-800 m-0">حركات العهدة</h2>
                             </div>
-                            <!-- search.ts: filter trigger, panel, ranges, type and reset -->
-                            <div id="custodies-filter-menu" class="relative">
-                                <button id="custodies-filter" type="button" class="btn-icon" aria-label="تصفية العهد"
-                                    aria-expanded="false" aria-controls="custodies-filter-panel">
-                                    <i class="h-5 w-5" data-lucide="filter"></i>
-                                </button>
-                                <form id="custodies-filter-panel" inert aria-labelledby="custodies-filter-title"
-                                    class="absolute left-0 top-full mt-2 w-80 max-w-[calc(100vw-3rem)] rounded-xl border border-gray-200 bg-white shadow-lg text-right
-                                    opacity-0 -translate-y-2 pointer-events-none transition-[opacity,transform] duration-200 ease-out">
-                                    <div class="custodies-menu-header">
-                                        <h2 id="custodies-filter-title" class="text-sm font-bold text-gray-700">تصفية العهد</h2>
-                                        <button id="custodies-filter-close" type="button" aria-label="إغلاق التصفية" class="cursor-pointer text-gray-400 hover:text-gray-700">
-                                            <i data-lucide="x" class="h-4 w-4"></i>
+
+                            <div class="flex gap-1.5 items-center">
+                                <div id="txn-print-menu" class="relative w-fit">
+                                    <button id="custody-print-btn" type="button" aria-expanded="false"
+                                        aria-controls="txn-print-options" class="btn">
+                                        <i class="w-5 h-5" data-lucide="printer"></i>
+                                        <span>طباعة</span>
+                                    </button>
+                                    <div id="txn-print-options" inert
+                                        class="absolute left-0 top-full z-50 mt-1 w-24 bg-[#4E5D72] text-white text-sm font-semibold rounded-md shadow-lg flex flex-col whitespace-nowrap
+                                        opacity-0 -translate-y-2 pointer-events-none transition-[opacity,transform] duration-200 ease-out">
+                                        <button id="txn-print-pdf" type="button"
+                                            class="flex items-center gap-2 p-3 rounded-md hover:bg-[#6C788A] focus-visible:bg-[#6C788A] transition-colors cursor-pointer">
+                                            <i data-lucide="printer" class="w-5 h-5"></i>
+                                            <span>PDF</span>
                                         </button>
-                                    </div>
-                                    <div class="space-y-4 p-4">
-                                        <div>
-                                            <label for="custodies-filter-type" class="block mb-1.5 text-xs font-semibold text-gray-600">النوع</label>
-                                            <select id="custodies-filter-type" class="custodies-filter-input">
-                                                <option value="">كل الأنواع</option>
-                                                <option value="عهدة مشتريات">مشتريات</option>
-                                                <option value="عهدة تشغيل وصيانة">تشغيل وصيانة</option>
-                                                <option value="عهدة مصاريف سفر">سفر وانتقالات</option>
-                                                <option value="عهدة مكتبية وإدارية">إدارية</option>
-                                                <option value="عهدة طوارئ">طارئة</option>
-                                            </select>
-                                        </div>
-                                        <fieldset>
-                                            <legend class="mb-1.5 text-xs font-semibold text-gray-600">المبلغ المبدئي</legend>
-                                            <div class="flex items-center gap-2">
-                                                <input id="custodies-initial-min" type="number" step="any" placeholder="من" aria-label="المبلغ المبدئي من" class="custodies-filter-input">
-                                                <span class="text-gray-400">—</span>
-                                                <input id="custodies-initial-max" type="number" step="any" placeholder="إلى" aria-label="المبلغ المبدئي إلى" class="custodies-filter-input">
-                                            </div>
-                                        </fieldset>
-                                        <fieldset>
-                                            <legend class="mb-1.5 text-xs font-semibold text-gray-600">الرصيد المتبقي</legend>
-                                            <div class="flex items-center gap-2">
-                                                <input id="custodies-balance-min" type="number" step="any" placeholder="من" aria-label="الرصيد المتبقي من" class="custodies-filter-input">
-                                                <span class="text-gray-400">—</span>
-                                                <input id="custodies-balance-max" type="number" step="any" placeholder="إلى" aria-label="الرصيد المتبقي إلى" class="custodies-filter-input">
-                                            </div>
-                                        </fieldset>
-                                        <fieldset>
-                                            <legend class="mb-1.5 text-xs font-semibold text-gray-600">تاريخ الإنشاء</legend>
-                                            <div class="flex items-center gap-2">
-                                                <input id="custodies-date-min" type="date" aria-label="تاريخ الإنشاء من" class="custodies-filter-input" dir="ltr">
-                                                <span class="text-gray-400">—</span>
-                                                <input id="custodies-date-max" type="date" aria-label="تاريخ الإنشاء إلى" class="custodies-filter-input" dir="ltr">
-                                            </div>
-                                        </fieldset>
-                                        <button type="reset" class="w-full cursor-pointer rounded-md border border-gray-200 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50">إلغاء التصفية</button>
-                                    </div>
-                                </form>
-                            </div>
-                            <!-- search.ts: sort trigger, panel, directions and reset -->
-                            <div id="custodies-sort-menu" class="relative">
-                                <button id="custodies-sort" type="button" class="btn-icon" aria-label="ترتيب العهد" aria-expanded="false" aria-controls="custodies-sort-panel">
-                                    <i class="h-5 w-5" data-lucide="arrow-down-up"></i>
-                                </button>
-                                <div id="custodies-sort-panel" inert aria-labelledby="custodies-sort-title"
-                                    class="absolute left-0 top-full mt-2 w-64 max-w-[calc(100vw-3rem)] rounded-xl border border-gray-200 bg-white shadow-lg text-right text-gray-700
-                                    opacity-0 -translate-y-2 pointer-events-none transition-[opacity,transform] duration-200 ease-out">
-                                    <div class="custodies-menu-header">
-                                        <h2 id="custodies-sort-title" class="text-sm font-bold text-gray-700">ترتيب حسب</h2>
-                                        <button id="custodies-sort-close" type="button" aria-label="إغلاق الترتيب" class="cursor-pointer text-gray-400 hover:text-gray-700">
-                                            <i data-lucide="x" class="h-4 w-4"></i>
+                                        <button id="txn-print-csv" type="button"
+                                            class="flex items-center gap-2 p-3 rounded-md hover:bg-[#6C788A] focus-visible:bg-[#6C788A] transition-colors cursor-pointer">
+                                            <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+                                            <span>CSV</span>
                                         </button>
-                                    </div>
-                                    <div class="custodies-sort-row" data-field="id">
-                                        <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer" data-sort="id" data-direction="desc">الرمز المرجعي</button>
-                                        <div class="custodies-sort-directions">
-                                            <button type="button" class="custodies-sort-direction" data-sort="id" data-direction="asc" aria-pressed="false" aria-label="الرمز المرجعي: A–Z" title="A–Z"><i data-lucide="arrow-down-a-z" class="h-4 w-4"></i></button>
-                                            <button type="button" class="custodies-sort-direction" data-sort="id" data-direction="desc" aria-pressed="false" aria-label="الرمز المرجعي: Z–A" title="Z–A"><i data-lucide="arrow-down-z-a" class="h-4 w-4"></i></button>
-                                        </div>
-                                    </div>
-                                    <div class="custodies-sort-row" data-field="custodian">
-                                        <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer" data-sort="custodian" data-direction="asc">المسؤول</button>
-                                        <div class="custodies-sort-directions">
-                                            <button type="button" class="custodies-sort-direction" data-sort="custodian" data-direction="asc" aria-pressed="false" aria-label="المسؤول: A–Z" title="A–Z"><i data-lucide="arrow-down-a-z" class="h-4 w-4"></i></button>
-                                            <button type="button" class="custodies-sort-direction" data-sort="custodian" data-direction="desc" aria-pressed="false" aria-label="المسؤول: Z–A" title="Z–A"><i data-lucide="arrow-down-z-a" class="h-4 w-4"></i></button>
-                                        </div>
-                                    </div>
-                                    <div class="custodies-sort-row" data-field="initial_funding">
-                                        <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer" data-sort="initial_funding" data-direction="asc">المبلغ المبدئي</button>
-                                        <div class="custodies-sort-directions">
-                                            <button type="button" class="custodies-sort-direction" data-sort="initial_funding" data-direction="asc" aria-pressed="false" aria-label="المبلغ المبدئي: الأقل أولاً" title="الأقل أولاً"><i data-lucide="arrow-down-0-1" class="h-4 w-4"></i></button>
-                                            <button type="button" class="custodies-sort-direction" data-sort="initial_funding" data-direction="desc" aria-pressed="false" aria-label="المبلغ المبدئي: الأعلى أولاً" title="الأعلى أولاً"><i data-lucide="arrow-down-1-0" class="h-4 w-4"></i></button>
-                                        </div>
-                                    </div>
-                                    <div class="custodies-sort-row" data-field="balance">
-                                        <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer" data-sort="balance" data-direction="asc">الرصيد المتبقي</button>
-                                        <div class="custodies-sort-directions">
-                                            <button type="button" class="custodies-sort-direction" data-sort="balance" data-direction="asc" aria-pressed="false" aria-label="الرصيد المتبقي: الأقل أولاً" title="الأقل أولاً"><i data-lucide="arrow-down-0-1" class="h-4 w-4"></i></button>
-                                            <button type="button" class="custodies-sort-direction" data-sort="balance" data-direction="desc" aria-pressed="false" aria-label="الرصيد المتبقي: الأعلى أولاً" title="الأعلى أولاً"><i data-lucide="arrow-down-1-0" class="h-4 w-4"></i></button>
-                                        </div>
-                                    </div>
-                                    <div class="custodies-sort-row" data-field="type">
-                                        <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer" data-sort="type" data-direction="asc">النوع</button>
-                                        <div class="custodies-sort-directions">
-                                            <button type="button" class="custodies-sort-direction" data-sort="type" data-direction="asc" aria-pressed="false" aria-label="النوع: A–Z" title="A–Z"><i data-lucide="arrow-down-a-z" class="h-4 w-4"></i></button>
-                                            <button type="button" class="custodies-sort-direction" data-sort="type" data-direction="desc" aria-pressed="false" aria-label="النوع: Z–A" title="Z–A"><i data-lucide="arrow-down-z-a" class="h-4 w-4"></i></button>
-                                        </div>
-                                    </div>
-                                    <div class="custodies-sort-row" data-field="created_at">
-                                        <button type="button" class="flex-1 self-stretch px-3 text-right cursor-pointer" data-sort="created_at" data-direction="desc">تاريخ الإنشاء</button>
-                                        <div class="custodies-sort-directions">
-                                            <button type="button" class="custodies-sort-direction" data-sort="created_at" data-direction="asc" aria-pressed="false" aria-label="تاريخ الإنشاء: الأقدم أولاً" title="الأقدم أولاً"><i data-lucide="calendar-arrow-up" class="h-4 w-4"></i></button>
-                                            <button type="button" class="custodies-sort-direction" data-sort="created_at" data-direction="desc" aria-pressed="false" aria-label="تاريخ الإنشاء: الأحدث أولاً" title="الأحدث أولاً"><i data-lucide="calendar-arrow-down" class="h-4 w-4"></i></button>
-                                        </div>
-                                    </div>
-                                    <p id="custodies-sort-status" aria-live="polite" class="border-t border-gray-100 px-3 py-2 text-xs text-gray-500">اختر العمود واتجاه الترتيب</p>
-                                    <div class="px-3 pb-3">
-                                        <button id="custodies-sort-reset" type="button" class="w-full cursor-pointer rounded-md border border-gray-200 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50">إلغاء الترتيب</button>
                                     </div>
                                 </div>
+                                <div class="w-px h-5 mx-1 bg-slate-200 flex-shrink-0"></div>
+                                <button id="custody-edit" class="btn">
+                                    <i class="w-5 h-5" data-lucide="edit"></i>
+                                    <span>تعديل</span></button>
+                                <button id="crt-txn-open" class="btn">
+                                    <i class="w-5 h-5" data-lucide="plus"></i>
+                                    <span>إنشاء فاتورة</span>
+                                </button>
                             </div>
-                            <div class="w-px h-5 bg-slate-200 flex-shrink-0"></div>
-                            <button id="create-custody-btn" class="btn">
-                                <i class="w-5 h-5 m-0" data-lucide="plus"></i>
-                                <span>إنشاء عهدة</span>
-                            </button>
                         </div>
                     </div>
-                <div class="overflow-x-auto rounded-b-2xl">
-                <table class="w-full text-sm border-collapse text-center">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                #</th>
-                            <th class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                الرمز المرجعي</th>
-                            <th class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                المسؤول</th>
-                            <th class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                المبلغ المبدئي</th>
-                            <th class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                الرصيد المتبقي</th>
-                            <th class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                النوع</th>
-                            <th class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                تاريخ الإنشاء</th>
-                            <th class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                الإجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="custody-body" class="bg-white">
+                    <!-- Table Card -->
+                    <div class="rounded-b-2xl overflow-x-auto">
+                        <table class="w-full text-sm border-collapse text-center">
+                            <thead class="bg-gray-50">
+                                <tr id="custody-table-head">
+                                    <th
+                                        class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
+                                        #</th>
+                                    <th
+                                        class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
+                                        تاريخ الفاتورة</th>
+                                    <th
+                                        class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
+                                        البيان</th>
+                                    <th
+                                        class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
+                                        المرفق</th>
+                                    <th
+                                        class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
+                                        المقبوضات (مدين)</th>
+                                    <th
+                                        class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
+                                        المصروفات (الدائن)</th>
+                                    <th
+                                        class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
+                                        الرصيد</th>
+                                </tr>
+                            </thead>
+                            <tbody id="custody-body" class="bg-white">
+                                <!-- Row 1 -->
+                                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                    <td class="px-4 py-3 text-gray-400 mono">1</td>
+                                    <td class="px-4 py-3 mono text-gray-600 text-xs" dir="ltr">2024-01-15</td>
+                                    <td class="px-4 py-3 mono font-semibold text-gray-500">رصيد أول المدة</td>
+                                    <td class="px-4 py-3 text-gray-400">—</td>
+                                    <td class="px-4 py-3 mono text-left font-bold text-emerald-600">
+                                        <span class="flex items-center justify-end gap-1">0.00<i width="16px"
+                                                data-lucide="saudi-riyal"></i></span>
+                                    </td>
+                                    <td class="px-4 py-3 mono text-left font-bold text-[#B37073]">
+                                        <span class="flex items-center justify-end gap-1">0.00<i width="16px"
+                                                data-lucide="saudi-riyal"></i></span>
+                                    </td>
+                                    <td class="px-4 py-3  mono text-left font-bold text-[#76797D]">
+                                        <span class="flex items-center justify-end gap-1">0.00<i width="16px"
+                                                data-lucide="saudi-riyal"></i></span>
+                                    </td>
+                                </tr>
 
-                    </tbody>
-                </table>
+                                <!-- Row 2 -->
+                                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                    <td class="px-4 py-3 text-gray-400 mono">2</td>
+                                    <td class="px-4 py-3 mono text-gray-600 text-xs" dir="ltr">2024-02-01</td>
+                                    <td class="px-4 py-3 mono font-semibold text-gray-500">شراء مستلزمات مكتبية</td>
+                                    <td class="px-4 py-3 text-gray-400">
+                                        <button
+                                            class="cursor-pointer bg-slate-500 hover:bg-slate-400 text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">
+                                            عرض</button>
+                                        <button
+                                            class="cursor-pointer bg-[#659095] hover:bg-[#83A6AA] text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">
+                                            تحميل</button>
+                                    </td>
+                                    <td class="px-4 py-3 mono text-left font-bold text-emerald-600">
+                                        <span class="flex items-center justify-end gap-1">8,000.00<i width="16px"
+                                                data-lucide="saudi-riyal"></i></span>
+                                    </td>
+                                    <td class="px-4 py-3 mono text-left font-bold text-[#B37073]">
+                                        <span class="flex items-center justify-end gap-1">8,000.00<i width="16px"
+                                                data-lucide="saudi-riyal"></i></span>
+                                    </td>
+                                    <td class="px-4 py-3 mono text-left font-bold text-gray-600">
+                                        <span class="flex items-center justify-end gap-1">4,800.00<i width="16px"
+                                                data-lucide="saudi-riyal"></i></span>
+                                    </td>
+                                </tr>
+
+                                <!-- Row 3 -->
+                                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                    <td class="px-4 py-3 text-gray-400 mono">3</td>
+                                    <td class="px-4 py-3 mono text-gray-600 text-xs" dir="ltr">2024-02-10</td>
+                                    <td class="px-4 py-3 mono font-semibold text-gray-500">شراء أثاث مكتبي</td>
+                                    <td class="px-4 py-3 text-gray-400">—</td>
+                                    <td class="px-4 py-3 mono text-left font-bold text-emerald-600">
+                                        <span class="flex items-center justify-end gap-1">20,000.00<i width="16px"
+                                                data-lucide="saudi-riyal"></i></span>
+                                    </td>
+                                    <td class="px-4 py-3 mono text-left font-bold text-[#B37073]">
+                                        <span class="flex items-center justify-end gap-1">20,000.00<i width="16px"
+                                                data-lucide="saudi-riyal"></i></span>
+                                    </td>
+                                    <td class="px-4 py-3 mono text-left font-bold text-gray-600">
+                                        <span class="flex items-center justify-end gap-1">11,200.00<i width="16px"
+                                                data-lucide="saudi-riyal"></i></span>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-            <div id="custody-table" class="hidden flex flex-col gap-4">
-                <div class="overflow-x-auto rounded-2xl border border-gray-200">
-                    <table class="w-full text-sm border-collapse text-center">
-                        <!-- Table Card -->
-                        <div class="relative z-20 bg-white px-2 pb-3 border-b border-gray-200">
-                            <div class="flex flex-wrap items-center justify-between">
-                                <!-- Header -->
-                                <div class="p-6 min-w-[400px]">
-                                    <div class="flex items-center gap-2">
-                                        <h1 class="text-2xl font-semibold text-gray-800">تفاصيل العهدة:</h1>
-                                        <h1 id="custody-id" class="text-xl font-semibold text-slate-600">
-                                            FRT-2026-001</h1>
-                                    </div>
-                                    <p id="custody-details" class="text-gray-700 mt-0.5">صالح عبدالله محمد - عهدة
-                                        مشتريات
-                                    </p>
-                                </div>
-
-                                <div class="min-w-[600px] bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
-                                    <div class="flex">
-                                        <div class="flex-1 min-w-0 px-5 py-4 text-right">
-                                            <p class="text-sm text-gray-500 mb-1.5">الرصيد المتبقي</p>
-                                            <p
-                                                class="text-2xl font-extrabold text-gray-600 mono leading-none flex gap-2 items-center">
-                                                <span id="txn-sum-balance">0.00</span>
-                                                <i width="16px" data-lucide="saudi-riyal"></i>
-                                            </p>
-                                        </div>
-                                        <div class="w-px bg-gray-200 self-stretch"></div>
-                                        <div class="flex-1 min-w-0 px-5 py-4 text-right">
-                                            <p class="text-sm text-gray-500 mb-1">إجمالي المدين (القبض)</p>
-                                            <p class="text-xl font-bold text-green-600 mono flex gap-2 items-center">
-                                                <span id="txn-sum-deposit">0.00</span>
-                                                <i width="16px" data-lucide="saudi-riyal"></i>
-                                            </p>
-                                        </div>
-                                        <div class="w-px bg-gray-200 self-stretch"></div>
-                                        <div class="flex-1 min-w-0 px-5 py-4 text-right">
-                                            <p class="text-sm text-gray-500 mb-1">إجمالي الدائن (الصرف)</p>
-                                            <p class="text-xl font-bold text-[#fe3614] mono  flex gap-2 items-center">
-                                                <span id="txn-sum-expense">0.00</span>
-                                                <i width="16px" data-lucide="saudi-riyal"></i>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-wrap justify-between items-center gap-2.5 p-3 w-full">
-                                <div class="flex gap-2.5 items-center">
-                                    <button id="txn-return" class="btn">
-                                        <i class="w-5 h-5 m-0" data-lucide="square-arrow-right-exit"></i>
-                                        <span>رجوع</span></button>
-                                    <h2 class="text-xl font-semibold text-gray-800 m-0">حركات العهدة</h2>
-                                </div>
-
-                                <div class="flex gap-1.5 items-center">
-                                    <div id="txn-print-menu" class="relative w-fit">
-                                        <button id="txn-print-btn" type="button" aria-expanded="false"
-                                            aria-controls="txn-print-options" class="btn">
-                                            <i class="w-5 h-5 m-0" data-lucide="printer"></i>
-                                            <span>طباعة</span>
-                                        </button>
-                                        <div id="txn-print-options" inert
-                                            class="absolute left-0 top-full z-50 mt-1 w-24 bg-[#4E5D72] text-white text-sm font-semibold rounded-md shadow-lg flex flex-col whitespace-nowrap
-                                        opacity-0 -translate-y-2 pointer-events-none transition-[opacity,transform] duration-200 ease-out">
-                                            <button id="txn-print-pdf" type="button"
-                                                class="flex items-center gap-2 p-3 rounded-md hover:bg-[#6C788A] focus-visible:bg-[#6C788A] transition-colors cursor-pointer">
-                                                <i data-lucide="printer" class="w-5 h-5"></i>
-                                                <span>PDF</span>
-                                            </button>
-                                            <button id="txn-print-csv" type="button"
-                                                class="flex items-center gap-2 p-3 rounded-md hover:bg-[#6C788A] focus-visible:bg-[#6C788A] transition-colors cursor-pointer">
-                                                <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
-                                                <span>CSV</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="w-px h-5 mx-1 bg-slate-200 flex-shrink-0"></div>
-                                    <button id="txn-edit" class="btn">
-                                        <i class="w-5 h-5 m-0" data-lucide="edit"></i>
-                                        <span>تعديل</span></button>
-                                    <button id="crt-txn-open" class="btn">
-                                        <i class="w-5 h-5 m-0" data-lucide="plus"></i>
-                                        <span>إنشاء فاتورة</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <thead class="bg-gray-50">
-                            <tr id="custody-table-head">
-                                <th
-                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                    #</th>
-                                <th
-                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                    تاريخ الفاتورة</th>
-                                <th
-                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                    البيان</th>
-                                <th
-                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                    المرفق</th>
-                                <th
-                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                    المقبوضات (مدين)</th>
-                                <th
-                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                    المصروفات (الدائن)</th>
-                                <th
-                                    class="px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
-                                    الرصيد</th>
-                            </tr>
-                        </thead>
-                        <tbody id="txn-body" class="bg-white">
-                            <!-- Row 1 -->
-                            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                                <td class="px-4 py-3 text-gray-400 mono">1</td>
-                                <td class="px-4 py-3 mono text-gray-600 text-xs" dir="ltr">2024-01-15</td>
-                                <td class="px-4 py-3 mono font-semibold text-gray-500">رصيد أول المدة</td>
-                                <td class="px-4 py-3 text-gray-400">—</td>
-                                <td class="px-4 py-3 mono text-left font-bold text-emerald-600">
-                                    <span class="flex items-center justify-end gap-1">0.00<i width="16px"
-                                            data-lucide="saudi-riyal"></i></span>
-                                </td>
-                                <td class="px-4 py-3 mono text-left font-bold text-[#B37073]">
-                                    <span class="flex items-center justify-end gap-1">0.00<i width="16px"
-                                            data-lucide="saudi-riyal"></i></span>
-                                </td>
-                                <td class="px-4 py-3  mono text-left font-bold text-[#76797D]">
-                                    <span class="flex items-center justify-end gap-1">0.00<i width="16px"
-                                            data-lucide="saudi-riyal"></i></span>
-                                </td>
-                            </tr>
-
-                            <!-- Row 2 -->
-                            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                                <td class="px-4 py-3 text-gray-400 mono">2</td>
-                                <td class="px-4 py-3 mono text-gray-600 text-xs" dir="ltr">2024-02-01</td>
-                                <td class="px-4 py-3 mono font-semibold text-gray-500">شراء مستلزمات مكتبية</td>
-                                <td class="px-4 py-3 text-gray-400">
-                                    <button
-                                        class="cursor-pointer bg-slate-500 hover:bg-slate-400 text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">
-                                        عرض</button>
-                                    <button
-                                        class="cursor-pointer bg-[#659095] hover:bg-[#83A6AA] text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">
-                                        تحميل</button>
-                                </td>
-                                <td class="px-4 py-3 mono text-left font-bold text-emerald-600">
-                                    <span class="flex items-center justify-end gap-1">8,000.00<i width="16px"
-                                            data-lucide="saudi-riyal"></i></span>
-                                </td>
-                                <td class="px-4 py-3 mono text-left font-bold text-[#B37073]">
-                                    <span class="flex items-center justify-end gap-1">8,000.00<i width="16px"
-                                            data-lucide="saudi-riyal"></i></span>
-                                </td>
-                                <td class="px-4 py-3 mono text-left font-bold text-gray-600">
-                                    <span class="flex items-center justify-end gap-1">4,800.00<i width="16px"
-                                            data-lucide="saudi-riyal"></i></span>
-                                </td>
-                            </tr>
-
-                            <!-- Row 3 -->
-                            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                                <td class="px-4 py-3 text-gray-400 mono">3</td>
-                                <td class="px-4 py-3 mono text-gray-600 text-xs" dir="ltr">2024-02-10</td>
-                                <td class="px-4 py-3 mono font-semibold text-gray-500">شراء أثاث مكتبي</td>
-                                <td class="px-4 py-3 text-gray-400">—</td>
-                                <td class="px-4 py-3 mono text-left font-bold text-emerald-600">
-                                    <span class="flex items-center justify-end gap-1">20,000.00<i width="16px"
-                                            data-lucide="saudi-riyal"></i></span>
-                                </td>
-                                <td class="px-4 py-3 mono text-left font-bold text-[#B37073]">
-                                    <span class="flex items-center justify-end gap-1">20,000.00<i width="16px"
-                                            data-lucide="saudi-riyal"></i></span>
-                                </td>
-                                <td class="px-4 py-3 mono text-left font-bold text-gray-600">
-                                    <span class="flex items-center justify-end gap-1">11,200.00<i width="16px"
-                                            data-lucide="saudi-riyal"></i></span>
-                                </td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </div>
+                <!-- Attachments -->
                 <div id="custody-attachments-table"
-                    class="hidden bg-white overflow-hidden rounded-2xl px-2 pb-3 border-b border-gray-200">
+                    class="hidden bg-white overflow-hidden rounded-2xl px-2 pb-3 mt-2 border-b border-gray-200">
                     <h1 class="p-5 text-2xl font-semibold text-gray-800">المرفقات</h1>
                     <div id="custody-attachments"
                         class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,13rem),1fr))] gap-3 p-2">
@@ -479,136 +542,6 @@
         </div>
     </div>
 
-    <!-- 2. قسم سجل العهد -->
-    <div id="section-list" class="hidden space-y-6">
-
-    </div>
-    <div class="hidden">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-base font-bold text-gray-800">قائمة العهد المالية المسجلة</h2>
-                <button onclick="openCreate()"
-                    class="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 px-4 rounded-xl transition">
-                    إنشاء عهدة جديدة
-                </button>
-            </div>
-            <div id="custody-cards-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
-        </div>
-    </div>
-
-    <!-- 3. قسم تفاصيل العهدة والتقرير -->
-    <div id="section-details" class="hidden space-y-6">
-
-        <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-200">
-            <button onclick="switchTab('list')"
-                class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-2 px-3 rounded-lg transition">
-                &rarr; العودة لسجل العهد
-            </button>
-            <div class="flex gap-2">
-                <button onclick="exportToExcel()"
-                    class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-4 rounded-lg transition">
-                    📊 تصدير Excel
-                </button>
-                <button onclick="exportToPDF()"
-                    class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-2 px-4 rounded-lg transition">
-                    📄 تصدير PDF
-                </button>
-            </div>
-        </div>
-
-        <div id="pdf-content" class="space-y-6 bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 border-b border-gray-100 pb-4">
-                <div class="border-l pl-4 border-gray-100">
-                    <span class="text-xs text-gray-500 block">رمز العهدة</span>
-                    <span id="dash-code" class="text-lg font-bold text-gray-800">-</span>
-                </div>
-                <div class="border-l pl-4 border-gray-100">
-                    <span class="text-xs text-gray-500 block">نوع العهدة</span>
-                    <span id="dash-type" class="text-sm font-bold text-blue-600">-</span>
-                    <span id="dash-custodian" class="text-xs text-emerald-600 block mt-1">المسؤول: -</span>
-                </div>
-                <div class="border-l pl-4 border-gray-100">
-                    <span class="text-xs text-emerald-600 font-semibold block">إجمالي المقبوضات (مدين)</span>
-                    <span id="dash-received" class="text-xl font-bold text-emerald-700">0.00 ر.س</span>
-                </div>
-                <div class="border-l pl-4 border-gray-100">
-                    <span class="text-xs text-rose-600 font-semibold block">إجمالي المصروفات (دائن)</span>
-                    <span id="dash-spent" class="text-xl font-bold text-rose-700">0.00 ر.س</span>
-                </div>
-                <div>
-                    <span class="text-xs text-blue-600 font-semibold block">الرصيد المتبقي</span>
-                    <span id="dash-remaining" class="text-xl font-bold text-blue-900">0.00 ر.س</span>
-                </div>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-right border-collapse">
-                    <thead>
-                        <tr class="bg-gray-50 text-gray-600 text-xs font-bold border-b border-gray-200">
-                            <th class="p-3">#</th>
-                            <th class="p-3">التاريخ</th>
-                            <th class="p-3">البيان / الوصف</th>
-                            <th class="p-3 text-center no-print">المرفق</th>
-                            <th class="p-3 text-emerald-600">المقبوضات (مدين)</th>
-                            <th class="p-3 text-rose-600">المصروفات (دائن)</th>
-                            <th class="p-3 text-blue-700">الرصيد</th>
-                            <th class="p-3 text-center no-print">الإجراء</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body" class="divide-y divide-gray-200 text-sm"></tbody>
-                    <tfoot>
-                        <tr class="bg-gray-100 font-bold text-gray-800 border-t-2 border-gray-300 text-sm">
-                            <td colspan="4" class="p-3 text-left">الإجمالي:</td>
-                            <td id="total-received-cell" class="p-3 text-emerald-700">0.00 ر.س</td>
-                            <td id="total-spent-cell" class="p-3 text-rose-700">0.00 ر.س</td>
-                            <td id="total-balance-cell" class="p-3 text-blue-900">0.00 ر.س</td>
-                            <td class="no-print"></td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-
-            <div id="pdf-images-section" class="pt-6 border-t border-gray-200 space-y-4">
-                <h3 class="text-sm font-bold text-gray-700">الفواتير والمرفقات:</h3>
-                <div id="pdf-images-container" class="grid grid-cols-2 gap-4"></div>
-            </div>
-
-        </div>
-
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-            <h2 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-                إضافة فاتورة / مصروف جديد
-            </h2>
-            <form id="expense-form" class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">تفاصيل الفاتورة / البيان</label>
-                    <input type="text" id="exp-desc" required placeholder="أدخل تفاصيل الشراء أو المصروف..."
-                        class="w-full border border-gray-300 rounded-lg p-2 text-sm outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">المبلغ المصروف (دائن)</label>
-                    <input type="number" step="0.01" id="exp-amount" required placeholder="0.00"
-                        class="w-full border border-gray-300 rounded-lg p-2 text-sm outline-none">
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">إرفاق الفاتورة (صورة)</label>
-                    <input type="file" id="exp-file" accept="image/*"
-                        class="w-full text-xs text-gray-500 border border-gray-300 rounded-lg p-1.5 outline-none">
-                </div>
-                <div class="md:col-span-1 flex items-end">
-                    <button type="submit" id="btn-add-expense"
-                        class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition">
-                        تسجيل المصروف
-                    </button>
-                </div>
-            </form>
-        </div>
-
-    </div>
-
-    </div>
     <dialog id="displayname-overlay" aria-modal="true" aria-labelledby="displayname-title" class="fixed inset-0 z-[100] m-0 h-full max-h-none w-full max-w-none
            overflow-y-auto border-0 bg-transparent p-4 sm:p-6
            backdrop:bg-slate-950/70 backdrop:backdrop-blur-sm">
@@ -636,12 +569,12 @@
         </div>
     </dialog>
     <!--  إنشاء عهدة جديدة -->
-    <dialog id="create-custody-overlay" role="dialog" aria-modal="true" aria-labelledby="create-custody-title"
+    <dialog id="crt-cust-overlay" role="dialog" aria-modal="true" aria-labelledby="crt-cust-title"
         class="fixed inset-0 z-[100] m-0 h-full max-h-none w-full max-w-none overflow-y-auto border-0 bg-transparent p-4 backdrop:bg-slate-950/70 backdrop:backdrop-blur-sm sm:p-6">
-        <div id="create-custody-overlay-layout" class="flex min-h-full items-center justify-center">
-            <div id="create-custody-form"
+        <div id="crt-cust-overlay-layout" class="flex min-h-full items-center justify-center">
+            <div id="crt-cust-form"
                 class="flex w-full max-w-2xl flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-2xl sm:p-6">
-                <h2 id="create-custody-title" class="text-base font-bold text-gray-800 flex items-center gap-2">
+                <h2 id="crt-cust-title" class="text-base font-bold text-gray-800 flex items-center gap-2">
                     <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
                     إعداد وإنشاء حساب عهدة جديدة
                 </h2>
@@ -649,12 +582,12 @@
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1">رمز المرجع /
                             العهدة</label>
-                        <input type="text" id="create-custody-id" required placeholder="مثال: CUST-2026-01"
+                        <input type="text" id="crt-cust-id" required placeholder="مثال: CUST-2026-01"
                             class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1">نوع العهدة</label>
-                        <select id="create-custody-type"
+                        <select id="crt-cust-type"
                             class="w-full border border-gray-300 rounded-lg p-2.5 text-sm bg-white outline-none focus:ring-2 focus:ring-emerald-500">
                             <option value="عهدة مشتريات">عهدة مشتريات</option>
                             <option value="عهدة تشغيل وصيانة">عهدة تشغيل وصيانة</option>
@@ -666,52 +599,50 @@
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1">اسم المسؤول عن العهدة
                             (المستلم)</label>
-                        <input type="text" id="create-custody-custodian" required placeholder="اسم الشخص المسؤول"
+                        <input type="text" id="crt-cust-custodian" required placeholder="اسم الشخص المسؤول"
                             class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1">المبلغ الأولي (مدين /
                             إيداع)</label>
-                        <input type="number" step="100" id="create-custody-initial-funding" required placeholder="0"
-                            min="0"
+                        <input type="number" step="100" id="crt-cust-initial-funding" required placeholder="0" min="0"
                             class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
-                    <div id="create-custody-file-field" class="min-w-0 md:col-span-2">
-                        <label id="create-custody-file-label" for="create-custody-receipt"
+                    <div id="crt-cust-file-field" class="min-w-0 md:col-span-2">
+                        <label id="crt-cust-file-label" for="crt-cust-receipt"
                             class="mb-1 block text-xs font-semibold text-gray-600">مرفق معاملة المبلغ الأولي
                             (اختياري)</label>
-                        <p id="create-custody-file-help" class="mb-2 text-xs text-gray-500">صورة أو ملف PDF يخص إيداع
+                        <p id="crt-cust-file-help" class="mb-2 text-xs text-gray-500">صورة أو ملف PDF يخص إيداع
                             المبلغ الأولي، بحد أقصى 6 ميجابايت.</p>
-                        <div id="create-custody-drop-zone"
+                        <div id="crt-cust-drop-zone"
                             class="flex min-h-12 flex-wrap items-center gap-2 rounded-lg border-2 border-dashed border-gray-300 px-2 text-sm transition-colors focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/25 sm:flex-nowrap">
-                            <input id="create-custody-receipt" class="peer sr-only" name="receipt" type="file"
-                                accept="application/pdf,image/*" aria-describedby="create-custody-file-help" />
-                            <label for="create-custody-receipt"
+                            <input id="crt-cust-receipt" class="peer sr-only" name="receipt" type="file"
+                                accept="application/pdf,image/*" aria-describedby="crt-cust-file-help" />
+                            <label for="crt-cust-receipt"
                                 class="flex h-8 shrink-0 cursor-pointer items-center rounded-lg bg-gray-100 px-3 hover:bg-gray-200 peer-focus-visible:ring-2 peer-focus-visible:ring-emerald-500">اختيار
                                 ملف</label>
-                            <span id="create-custody-file-name" class="min-w-0 flex-1 truncate text-gray-500">لم يتم
+                            <span id="crt-cust-file-name" class="min-w-0 flex-1 truncate text-gray-500">لم يتم
                                 اختيار ملف</span>
-                            <div id="create-custody-file-actions" class="hidden shrink-0 items-center gap-1">
-                                <button id="create-custody-view-file" type="button"
+                            <div id="crt-cust-file-actions" class="hidden shrink-0 items-center gap-1">
+                                <button id="crt-cust-view-file" type="button"
                                     class="h-8 cursor-pointer rounded-lg bg-emerald-50 px-3 text-emerald-700 hover:bg-emerald-100">عرض
                                     الملف</button>
-                                <button id="create-custody-clear-file" type="button"
-                                    aria-label="إزالة مرفق المبلغ الأولي"
+                                <button id="crt-cust-clear-file" type="button" aria-label="إزالة مرفق المبلغ الأولي"
                                     class="h-8 cursor-pointer rounded px-2 text-xl leading-none text-gray-500 hover:bg-red-50 hover:text-red-600">×</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-full">
-                    <button id="create-custody-create"
+                    <button id="crt-cust-create"
                         class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition cursor-pointer">
                         إنشاء العهدة
                     </button>
-                    <button id="create-custody-cancel"
+                    <button id="crt-cust-cancel"
                         class="w-full bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 rounded-xl text-sm transition cursor-pointer">
                         رجوع</button>
                 </div>
-                <div id="create-custody-message" class="hidden"></div>
+                <div id="crt-cust-message" class="hidden"></div>
             </div>
         </div>
     </dialog>
