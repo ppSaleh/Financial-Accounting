@@ -1,5 +1,44 @@
 @import "tailwindcss";
 
+
+@theme {
+    --color-accent-50: #f4f6f8;
+    --color-accent-100: #e4e8ed;
+    --color-accent-200: #ccd4dc;
+    --color-accent-300: #a8b5c3;
+    --color-accent-400: #7e90a3;
+    --color-accent-500: #5f7389;
+    --color-accent-600: #3F4C5E;
+    --color-accent-700: #364250;
+    --color-accent-800: #2f3844;
+    --color-accent-900: #2a313b;
+    --color-accent-950: #1b2027;
+
+    --color-brandgreen-50: #f3f7f5;
+    --color-brandgreen-100: #e1ebe6;
+    --color-brandgreen-200: #c5d9cf;
+    --color-brandgreen-300: #9dbfaf;
+    --color-brandgreen-400: #739e8a;
+    --color-brandgreen-500: #67987F;
+    --color-brandgreen-600: #557e69;
+    --color-brandgreen-700: #466656;
+    --color-brandgreen-800: #3b5447;
+    --color-brandgreen-900: #33463c;
+    --color-brandgreen-950: #1a2520;
+
+    --color-brandred-50: #f9f4f4;
+    --color-brandred-100: #f1e6e6;
+    --color-brandred-200: #e5cecf;
+    --color-brandred-300: #d4aaac;
+    --color-brandred-400: #c28487;
+    --color-brandred-500: #B37073;
+    --color-brandred-600: #9e5a5d;
+    --color-brandred-700: #844a4d;
+    --color-brandred-800: #6e4042;
+    --color-brandred-900: #5c393b;
+    --color-brandred-950: #311c1d;
+}
+
 html {
     scrollbar-color: gray #fff;
 }
@@ -16,57 +55,79 @@ body {
 .custodies-sort-row {
     @apply flex min-h-9 items-center justify-between text-xs font-semibold hover:bg-slate-50;
 }
+
 .custodies-sort-row.active {
     @apply bg-slate-100 text-slate-900 font-semibold;
 }
+
 .custodies-sort-directions {
     @apply flex gap-1 pl-2;
 }
+
 .custodies-sort-direction {
     @apply cursor-pointer rounded p-1.5 text-slate-500 hover:bg-slate-200 focus-visible:outline-2 focus-visible:outline-slate-500;
 }
+
 .custodies-sort-direction[aria-pressed="true"] {
     @apply bg-slate-600 text-white;
 }
+
 @media (hover: hover) and (pointer: fine) {
-    .custodies-sort-directions { opacity: 0; }
+    .custodies-sort-directions {
+        opacity: 0;
+    }
+
     .custodies-sort-row:hover .custodies-sort-directions,
     .custodies-sort-row:focus-within .custodies-sort-directions,
-    .custodies-sort-row.active .custodies-sort-directions { opacity: 1; }
+    .custodies-sort-row.active .custodies-sort-directions {
+        opacity: 1;
+    }
 }
 
 .custodies-filter-input {
     @apply w-full min-w-0 rounded-md border border-gray-300 bg-white px-2 py-2 text-xs text-gray-700 outline-none focus:ring-2 focus:ring-emerald-500;
 }
 
+
+
 .btn {
-    @apply bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex flex-shrink-0 items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer;
+    @apply text-accent-600 hover:bg-accent-50 flex flex-shrink-0 items-center gap-2 h-8 pr-2 pl-4 rounded-md text-sm font-semibold cursor-pointer transition-colors;
 }
 
-.btn-green {
-    @apply bg-[#67987F] hover:bg-[#83AA96] text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer;
-}
-
-.btn-light {
-    @apply bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex flex-shrink-0 items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer;
+.btn-accent {
+    @apply bg-accent-600 hover:bg-accent-700 text-white flex flex-shrink-0 items-center gap-2 h-8 pr-2 pl-4 rounded-md text-sm font-semibold cursor-pointer transition-colors;
 }
 
 .btn-icon {
-    @apply bg-[#4E5D72] hover:bg-[#6C788A] text-white text-sm font-semibold flex flex-shrink-0 items-center h-8 p-2 rounded-md transition-colors cursor-pointer;
+    @apply hover:bg-accent-50 text-accent-600 hover:text-accent-700 flex flex-shrink-0 items-center gap-2 h-10 px-3 py-4 rounded-md text-sm font-semibold cursor-pointer transition-colors;
 }
 
+.btn-dropdown {
+    @apply  hover:bg-gray-400 hover:text-accent-800 flex flex-shrink-0 items-center gap-2 h-8 pr-2 pl-4 rounded-md text-sm font-semibold cursor-pointer transition-colors;
+}
+
+.btn-green {
+    @apply bg-brandgreen-500 hover:bg-brandgreen-400 text-white text-sm font-semibold flex items-center gap-2 h-8 pr-2 pl-4 rounded-md transition-colors cursor-pointer;
+}
+
+
 .row-btn {
-    @apply cursor-pointer bg-slate-500 hover:bg-slate-400 text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors;
+    @apply text-accent-500 hover:bg-accent-100 hover:text-accent-600 text-xs font-semibold px-4 py-1.5 rounded-md cursor-pointer transition-colors;
+}
+.row-btn-accent {
+    @apply bg-accent-500 hover:bg-accent-600 text-white text-xs font-semibold px-4 py-1.5 rounded-md cursor-pointer transition-colors;
 }
 
 .row-btn-green {
-    @apply cursor-pointer bg-[#659095] hover:bg-[#83A6AA] text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors;
+    @apply text-brandgreen-600 hover:bg-brandgreen-100 hover:text-brandgreen-600 text-xs font-semibold px-4 py-1.5 rounded-md cursor-pointer transition-colors;
 }
 
 .row-btn-red {
-    @apply cursor-pointer bg-[#B37073] hover:bg-[#C79497] text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors
+    @apply text-brandred-500 hover:bg-brandred-100 hover:text-brandred-600 text-xs font-semibold px-4 py-1.5 rounded-md cursor-pointer transition-colors;
 }
 
+
+/* Loading Skeletion */
 .skeleton {
     width: 100%;
     min-width: 3rem;

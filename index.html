@@ -119,9 +119,9 @@
                         </div>
                     </div>
                     <!-- Search elements -->
-                    <div class="flex w-full items-center gap-2.5 h-8 py-3">
+                    <div class="flex w-full items-center gap-2.5 h-10 py-3">
                         <div
-                            class="flex-1 flex items-center h-8 pr-2 pl-3 border border-slate-200 rounded-md bg-slate-50 outline-none">
+                            class="flex-1 flex items-center h-10 pr-2 pl-3 border border-slate-200 rounded-md bg-slate-50 outline-none">
                             <i data-lucide="search" class=" h-4 text-slate-600"></i>
                             <div class="w-px h-5 mx-2 bg-slate-300 flex-shrink-0"></div>
                             <!-- search.ts: live search by Custody.id or Custody.custodian -->
@@ -301,7 +301,7 @@
                             </div>
                         </div>
                         <div class="w-px h-5 bg-slate-200 flex-shrink-0"></div>
-                        <button id="crt-cust-btn" class="btn">
+                        <button id="crt-cust-btn" class="btn-accent">
                             <i class="w-5 h-5" data-lucide="plus"></i>
                             <span>إنشاء عهدة</span>
                         </button>
@@ -405,25 +405,25 @@
                                         <span>طباعة</span>
                                     </button>
                                     <div id="txn-print-options" inert
-                                        class="absolute left-0 top-full z-50 mt-1 w-24 bg-[#4E5D72] text-white text-sm font-semibold rounded-md shadow-lg flex flex-col whitespace-nowrap
+                                        class="absolute left-0 top-full z-50 mt-1 w-24 bg-gray-300 text-accent-700 text-sm font-semibold rounded-md shadow-lg flex flex-col whitespace-nowrap
                                         opacity-0 -translate-y-2 pointer-events-none transition-[opacity,transform] duration-200 ease-out">
                                         <button id="txn-print-pdf" type="button"
-                                            class="flex items-center gap-2 p-3 rounded-md hover:bg-[#6C788A] focus-visible:bg-[#6C788A] transition-colors cursor-pointer">
+                                            class="btn-dropdown">
                                             <i data-lucide="printer" class="w-5 h-5"></i>
                                             <span>PDF</span>
                                         </button>
                                         <button id="txn-print-csv" type="button"
-                                            class="flex items-center gap-2 p-3 rounded-md hover:bg-[#6C788A] focus-visible:bg-[#6C788A] transition-colors cursor-pointer">
+                                            class="btn-dropdown">
                                             <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
                                             <span>CSV</span>
                                         </button>
                                     </div>
                                 </div>
-                                <div class="w-px h-5 mx-1 bg-slate-200 flex-shrink-0"></div>
                                 <button id="custody-edit" class="btn">
                                     <i class="w-5 h-5" data-lucide="edit"></i>
                                     <span>تعديل</span></button>
-                                <button id="crt-txn-open" class="btn">
+                                <div class="w-px h-5 mx-1 bg-slate-200 flex-shrink-0"></div>
+                                <button id="crt-txn-open" class="btn-accent">
                                     <i class="w-5 h-5" data-lucide="plus"></i>
                                     <span>إنشاء فاتورة</span>
                                 </button>
@@ -541,10 +541,10 @@
             </div>
         </div>
     </div>
-
+    <!-- قائمة تغيير اسم العرض -->
     <dialog id="displayname-overlay" aria-modal="true" aria-labelledby="displayname-title" class="fixed inset-0 z-[100] m-0 h-full max-h-none w-full max-w-none
            overflow-y-auto border-0 bg-transparent p-4 sm:p-6
-           backdrop:bg-slate-950/70 backdrop:backdrop-blur-sm">
+           backdrop:bg-accent-950/70 backdrop:backdrop-blur-sm">
         <div id="displayname-overlay-layout" class="flex min-h-full items-center justify-center">
             <div class="bg-white p-6 flex flex-col gap-4 rounded-2xl shadow-sm border border-gray-200 w-96  mx-auto">
                 <h2 id="displayname-title" class="text-base font-bold text-gray-800 flex items-center gap-2">
@@ -570,7 +570,7 @@
     </dialog>
     <!--  إنشاء عهدة جديدة -->
     <dialog id="crt-cust-overlay" role="dialog" aria-modal="true" aria-labelledby="crt-cust-title"
-        class="fixed inset-0 z-[100] m-0 h-full max-h-none w-full max-w-none overflow-y-auto border-0 bg-transparent p-4 backdrop:bg-slate-950/70 backdrop:backdrop-blur-sm sm:p-6">
+        class="fixed inset-0 z-[100] m-0 h-full max-h-none w-full max-w-none overflow-y-auto border-0 bg-transparent p-4 backdrop:bg-accent-950/70 backdrop:backdrop-blur-sm sm:p-6">
         <div id="crt-cust-overlay-layout" class="flex min-h-full items-center justify-center">
             <div id="crt-cust-form"
                 class="flex w-full max-w-2xl flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-2xl sm:p-6">
@@ -648,7 +648,7 @@
     </dialog>
     <!--  إنشاء فاتورة جديدة -->
     <dialog id="crt-txn-overlay" role="dialog" aria-modal="true" aria-labelledby="crt-txn-title"
-        class="crt-overlay fixed inset-0 z-[100] m-0 h-full max-h-none w-full max-w-none overflow-y-auto border-0 bg-transparent p-4 backdrop:bg-slate-950/70 backdrop:backdrop-blur-sm sm:p-6">
+        class="crt-overlay fixed inset-0 z-[100] m-0 h-full max-h-none w-full max-w-none overflow-y-auto border-0 bg-transparent p-4 backdrop:bg-accent-950/70 backdrop:backdrop-blur-sm sm:p-6">
         <div id="crt-txn-overlay-layout" class="crt-overlay-sub flex min-h-full items-center justify-center">
             <!-- Set data-available-balance to enforce a maximum expense amount. -->
             <form id="crt-txn-form" data-available-balance="" novalidate
@@ -763,7 +763,7 @@
     </dialog>
     <!-- عرض الصور -->
     <div id="image-overlay"
-        class="hidden overlay fixed inset-0 z-100 flex items-center justify-center bg-slate-950/70 p-3 backdrop-blur-sm sm:p-6">
+        class="hidden overlay fixed inset-0 z-100 flex items-center justify-center bg-accent-950/70 p-3 backdrop-blur-sm sm:p-6">
         <div role="dialog" aria-modal="true" aria-labelledby="image-overlay-title"
             class="flex max-h-[calc(100dvh-3rem)] max-w-full flex-col overflow-hidden rounded-2xl border border-white/15 bg-white shadow-2xl">
             <div class="flex shrink-0 items-center justify-between gap-6 border-b border-gray-200 px-4 py-3">
@@ -786,7 +786,7 @@
     </div>
     <!-- تأكيد -->
     <div id="confirm-overlay"
-        class="hidden overlay fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/70 p-3 backdrop-blur-sm sm:p-6">
+        class="hidden overlay fixed inset-0 z-[110] flex items-center justify-center bg-accent-950/70 p-3 backdrop-blur-sm sm:p-6">
         <div role="dialog" aria-modal="true" aria-labelledby="confirm-overlay-title"
             aria-describedby="confirm-overlay-message"
             class="flex w-full max-w-md flex-col overflow-hidden rounded-2xl border border-white/15 bg-white shadow-2xl">
