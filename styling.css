@@ -126,6 +126,11 @@ body {
     @apply text-brandred-500 hover:bg-brandred-100 hover:text-brandred-600 text-xs font-semibold px-4 py-1.5 rounded-md cursor-pointer transition-colors;
 }
 
+/* Keep utility visibility overrides effective against component display rules. */
+.hidden {
+    display: none !important;
+}
+
 
 /* Loading Skeletion */
 .skeleton {

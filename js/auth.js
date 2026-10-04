@@ -73,6 +73,22 @@ async function buildprofile() {
     profileMenu.classList.remove('hidden');
     Displayname.textContent = profile.display_name;
     profileRole.textContent = `الرتبة: ${isSupervisor() ? 'مشرف' : 'موظف'}`;
+    supActions();
+}
+const crtCust = document.getElementById('crt-cust-btn');
+const sepBeforeCrtCust = document.getElementById('separator-before-crt-cust-btn');
+const editBtn = document.getElementById('custody-edit');
+function supActions() {
+    if (isSupervisor()) {
+        crtCust.classList.remove('hidden');
+        sepBeforeCrtCust.classList.remove('hidden');
+        editBtn.classList.remove('hidden');
+    }
+    else {
+        crtCust.classList.add('hidden');
+        sepBeforeCrtCust.classList.add('hidden');
+        editBtn.classList.add('hidden');
+    }
 }
 async function fetchProfile(userId) {
     const { data, error } = await supabaseClient

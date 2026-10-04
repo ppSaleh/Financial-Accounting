@@ -26,6 +26,7 @@ async function loadCustody(importedcustody) {
     await renderCustody();
 }
 async function renderCustody() {
+    receiptLoadVersion++;
     body.innerHTML = '';
     receiptsArea.replaceChildren();
     receiptsTable.classList.add('hidden');
@@ -83,6 +84,7 @@ async function renderCustody() {
     loadRecipts();
 }
 function showCustodyPulse() {
+    receiptLoadVersion++;
     summaryBalance.textContent = '0.00';
     summaryTotalDeposit.textContent = '0.00';
     summaryTotalExpense.textContent = '0.00';
@@ -210,15 +212,38 @@ async function viewReceipt(t) {
 function isPdfReceipt(t) {
     return /\.pdf$/i.test(t.doc_path ?? '');
 }
-async function renderPdfPreview(url, img) {
+const pdfPreviews = new WeakMap();
+async function renderPdfPreview(txn, img) {
+    const path = txn.doc_path;
+    let cached = pdfPreviews.get(txn);
+    if (!cached || cached.path !== path) {
+        const preview = createPdfPreview(path);
+        cached = { path, preview };
+        pdfPreviews.set(txn, cached);
+        // Failed previews must be retried when the receipt is opened again.
+        void preview.catch(() => {
+            if (pdfPreviews.get(txn)?.preview === preview)
+                pdfPreviews.delete(txn);
+        });
+    }
+    const src = await cached.preview;
+    if (img.isConnected) {
+        img.src = src;
+        img.classList.remove('invisible');
+        img.parentElement?.querySelector('.preview-loading')?.remove();
+    }
+}
+async function createPdfPreview(path) {
     const [{ getDocument, GlobalWorkerOptions }, { default: workerUrl }] = await Promise.all([
         import('pdfjs-dist'),
         import('pdfjs-dist/build/pdf.worker.min.mjs?url'),
     ]);
-    if (!img.isConnected)
-        return;
     GlobalWorkerOptions.workerSrc = workerUrl;
-    const task = getDocument({ url });
+    // Load the complete receipt before parsing, avoiding streamed/range requests.
+    const { data, error } = await supabaseClient.storage.from('receipts').download(path);
+    if (error)
+        throw error;
+    const task = getDocument({ data: new Uint8Array(await data.arrayBuffer()) });
     // Password-protected files can still be opened in the browser's PDF viewer.
     task.onPassword = () => { void task.destroy(); };
     try {
@@ -230,8 +255,7 @@ async function renderPdfPreview(url, img) {
         canvas.width = Math.ceil(viewport.width);
         canvas.height = Math.ceil(viewport.height);
         await page.render({ canvas, viewport }).promise;
-        if (img.isConnected)
-            img.src = canvas.toDataURL('image/png');
+        return canvas.toDataURL('image/png');
     }
     finally {
         await task.destroy();
@@ -239,9 +263,14 @@ async function renderPdfPreview(url, img) {
 }
 const receiptsTable = document.getElementById('custody-attachments-table');
 const receiptsArea = document.getElementById('custody-attachments');
+let receiptLoadVersion = 0;
 async function loadRecipts() {
-    await attachReceiptUrls(txns);
-    const txnsReceipts = txns
+    const version = ++receiptLoadVersion;
+    const transactions = txns;
+    await attachReceiptUrls(transactions);
+    if (version !== receiptLoadVersion)
+        return;
+    const txnsReceipts = transactions
         .filter(t => t.doc_path !== null);
     if (txnsReceipts.length === 0) {
         receiptsTable.classList.add('hidden');
@@ -252,8 +281,9 @@ async function loadRecipts() {
         const isExpense = txn.expense !== 0;
         const amountspan = `<span class="flex shrink-0 items-center gap-1 text-xs font-medium text-${isExpense ? '[#B37073]' : 'emerald-800'}">${isExpense ? txn.expense.toFixed(2) : txn.deposit.toFixed(2)}${riyalsSVGsmol}</span>`;
         let cell = `<div class="flex min-w-0 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white">
-                            <button type="button" class="receipt-preview cursor-pointer" aria-label="عرض المرفق">
-                                <img class="h-56 w-full bg-gray-50 object-contain p-3" alt="${isPdfReceipt(txn) ? 'PDF — الصفحة الأولى' : 'صورة المرفق'}">
+                            <button type="button" class="receipt-preview relative cursor-pointer" aria-label="عرض المرفق">
+                                <img class="h-56 w-full bg-gray-50 object-contain p-3 ${isPdfReceipt(txn) ? 'invisible' : ''}" alt="${isPdfReceipt(txn) ? 'PDF — الصفحة الأولى' : 'صورة المرفق'}">
+                                ${isPdfReceipt(txn) ? '<span class="preview-loading absolute inset-0 flex items-center justify-center bg-gray-50 text-sm text-gray-500" role="status">جاري تحميل المعاينة…</span>' : ''}
                             </button>
                             <div class="space-y-2 border-t border-gray-100 px-3 py-3 text-right">
                                 <span class="block truncate text-sm font-semibold text-gray-700" dir="auto">${txn.description}</span>
@@ -273,11 +303,17 @@ async function loadRecipts() {
         const img = button.querySelector('img');
         if (!txn.receipt_url) {
             img.alt = 'تعذر تحميل المرفق';
+            img.classList.remove('invisible');
+            button.querySelector('.preview-loading')?.remove();
         }
         else if (isPdfReceipt(txn)) {
-            void renderPdfPreview(txn.receipt_url, img).catch(error => {
+            void renderPdfPreview(txn, img).catch(error => {
+                if (!img.isConnected)
+                    return;
                 console.error('Failed to render PDF preview:', error);
                 img.alt = 'تعذرت معاينة PDF — اضغط لفتح الملف';
+                img.classList.remove('invisible');
+                button.querySelector('.preview-loading')?.remove();
             });
         }
         else {
