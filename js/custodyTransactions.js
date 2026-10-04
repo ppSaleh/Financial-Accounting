@@ -356,7 +356,7 @@ editBtn.addEventListener('click', () => {
 function toggleEditMode() {
     isEditmode = !isEditmode;
     if (isEditmode) {
-        editBtn.classList = 'btn-green';
+        editBtn.classList = 'btn-green-icon';
         custodyTableRow.innerHTML += `<th
                                     class="actions-col px-4 py-3 font-bold text-gray-600 border-b border-gray-200 whitespace-nowrap">
                                     الإجراءات</th>`;
@@ -422,7 +422,7 @@ function toggleEditMode() {
         });
     }
     else {
-        editBtn.classList = 'btn';
+        editBtn.classList = 'btn-icon';
         custodyTableRow.querySelector('.actions-col')?.remove();
         const rows = body.querySelectorAll('tr');
         if (!rows)

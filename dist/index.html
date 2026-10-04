@@ -3,13 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة العهد والسلف المالية</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/assets/favicon-CUsyKZ89.png" />
-  <script type="module" crossorigin src="/assets/index-oMHa3pt5.js"></script>
+  <script type="module" crossorigin src="/assets/index-B_miIjG1.js"></script>
   <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-8BhlS34s.js">
-  <link rel="stylesheet" crossorigin href="/assets/index-Dg5usKcA.css">
+  <link rel="stylesheet" crossorigin href="/assets/index-OrJ7Vm5K.css">
 </head>
 
 <body class="bg-gray-100 min-h-screen p-4">
@@ -68,7 +69,7 @@
                     </div>
                 </div>
                 <button id="login-btn"
-                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition">
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm cursor-pointer transition">
                     تسجيل دخول
                 </button>
                 <div class="w-full flex justify-center">
@@ -311,6 +312,7 @@
                 </div>
                 <!-- Table Card -->
                 <div class="overflow-x-auto rounded-b-2xl">
+
                     <table class="w-full text-sm border-collapse text-center">
                         <thead class="bg-gray-50">
                             <tr>
@@ -406,7 +408,7 @@
                                     </button>
                                     <div id="txn-print-options" inert
                                         class="absolute left-0 top-full z-50 mt-1 w-24 bg-gray-300 text-accent-700 text-sm font-semibold rounded-md shadow-lg flex flex-col whitespace-nowrap
-                                        opacity-0 -translate-y-2 pointer-events-none transition-[opacity,transform] duration-200 ease-out">
+                                        opacity-0 -translate-y-2 shadow-lg pointer-events-none transition-[opacity,transform] duration-200 ease-out">
                                         <button id="txn-print-pdf" type="button" class="btn-dropdown">
                                             <i data-lucide="printer" class="w-5 h-5"></i>
                                             <span>PDF</span>
@@ -457,7 +459,7 @@
                                 </tr>
                             </thead>
                             <tbody id="custody-body" class="bg-white">
-                                
+
                             </tbody>
                         </table>
                     </div>
@@ -639,7 +641,7 @@
                         <div id="crt-txn-amount-shell"
                             class="flex h-11 items-center rounded-lg border border-gray-300 px-3 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/25">
                             <input id="crt-txn-amount" class="h-full min-w-0 flex-1 bg-transparent text-sm outline-none"
-                                name="amount" type="number" min="0.01" step="0.01" required placeholder="0.00" />
+                                name="amount" type="number" min="0.01" step="100" required placeholder="0.00" />
                         </div>
                     </div>
 

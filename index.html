@@ -12,6 +12,8 @@
 </head>
 
 <body class="bg-gray-100 min-h-screen p-4">
+    <!-- tooltip -->
+    <div id="custom-tooltip"></div>
     <div class="max-w-7xl mx-auto space-y-6">
         <!-- الهيدر وشعار الجمعية -->
         <div
@@ -67,7 +69,7 @@
                     </div>
                 </div>
                 <button id="login-btn"
-                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition">
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm cursor-pointer transition">
                     تسجيل دخول
                 </button>
                 <div class="w-full flex justify-center">
@@ -132,8 +134,8 @@
                         </div>
                         <!-- search.ts: filter trigger, panel, ranges, type and reset -->
                         <div id="custodies-filter-menu" class="relative">
-                            <button id="custodies-filter" type="button" class="btn-icon" aria-label="تصفية العهد"
-                                aria-expanded="false" aria-controls="custodies-filter-panel">
+                            <button id="custodies-filter" type="button" class="btn-icon has-tooltip" aria-label="تصفية العهد"
+                                aria-expanded="false" aria-controls="custodies-filter-panel" data-tooltip="تصفية العهد">
                                 <i class="h-5 w-5" data-lucide="filter"></i>
                             </button>
                             <form id="custodies-filter-panel" inert aria-labelledby="custodies-filter-title" class="absolute left-0 top-full mt-2 w-80 max-w-[calc(100vw-3rem)] rounded-xl border border-gray-200 bg-white shadow-lg text-right
@@ -200,8 +202,8 @@
                         </div>
                         <!-- search.ts: sort trigger, panel, directions and reset -->
                         <div id="custodies-sort-menu" class="relative">
-                            <button id="custodies-sort" type="button" class="btn-icon" aria-label="ترتيب العهد"
-                                aria-expanded="false" aria-controls="custodies-sort-panel">
+                            <button id="custodies-sort" type="button" class="btn-icon has-tooltip" aria-label="ترتيب العهد"
+                                aria-expanded="false" aria-controls="custodies-sort-panel" data-tooltip="ترتيب العهد">
                                 <i class="h-5 w-5" data-lucide="arrow-down-up"></i>
                             </button>
                             <div id="custodies-sort-panel" inert aria-labelledby="custodies-sort-title" class="absolute left-0 top-full mt-2 w-64 max-w-[calc(100vw-3rem)] rounded-xl border border-gray-200 bg-white shadow-lg text-right text-gray-700
@@ -399,13 +401,12 @@
                             <div class="flex gap-1.5 items-center">
                                 <div id="txn-print-menu" class="relative w-fit">
                                     <button id="custody-print-btn" type="button" aria-expanded="false"
-                                        aria-controls="txn-print-options" class="btn">
+                                        aria-controls="txn-print-options" class="btn-icon has-tooltip" data-tooltip="طباعة">
                                         <i class="w-5 h-5" data-lucide="printer"></i>
-                                        <span>طباعة</span>
                                     </button>
                                     <div id="txn-print-options" inert
-                                        class="absolute left-0 top-full z-50 mt-1 w-24 bg-gray-300 text-accent-700 text-sm font-semibold rounded-md shadow-lg flex flex-col whitespace-nowrap
-                                        opacity-0 -translate-y-2 shadow-lg pointer-events-none transition-[opacity,transform] duration-200 ease-out">
+                                        class="absolute left-0 top-full z-50 mt-1 w-20 bg-gray-300 text-accent-700 text-sm font-semibold rounded-md shadow-lg flex flex-col whitespace-nowrap
+                                        opacity-0 -translate-y-2 shadow-lg pointer-events-none transition-[opacity,transform] duration-200 ease-out -translate-x-1/4">
                                         <button id="txn-print-pdf" type="button" class="btn-dropdown">
                                             <i data-lucide="printer" class="w-5 h-5"></i>
                                             <span>PDF</span>
@@ -416,9 +417,8 @@
                                         </button>
                                     </div>
                                 </div>
-                                <button id="custody-edit" class="btn">
-                                    <i class="w-5 h-5" data-lucide="edit"></i>
-                                    <span>تعديل</span></button>
+                                <button id="custody-edit" class="btn-icon has-tooltip" data-tooltip="تعديل">
+                                    <i class="w-5 h-5" data-lucide="edit"></i></button>
                                 <div class="w-px h-5 mx-1 bg-slate-200 flex-shrink-0"></div>
                                 <button id="crt-txn-open" class="btn-accent">
                                     <i class="w-5 h-5" data-lucide="plus"></i>
@@ -456,7 +456,7 @@
                                 </tr>
                             </thead>
                             <tbody id="custody-body" class="bg-white">
-                                
+
                             </tbody>
                         </table>
                     </div>

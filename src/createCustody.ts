@@ -1,5 +1,5 @@
 import { supabaseClient } from "./auth";
-import { Custody, loadCustodies } from "./custodies";
+import { Custody, CUSTODY_TYPES, CustodyType, loadCustodies } from "./custodies";
 
 const overlay = document.getElementById('crt-cust-overlay') as HTMLDialogElement;
 const overlayLayout = document.getElementById('crt-cust-overlay-layout')!;
@@ -120,14 +120,6 @@ interface CustodyTransactionInsert {
     transaction_date: string
 }
 
-type CustodyType = Custody['type']
-const CUSTODY_TYPES: CustodyType[] = [
-    'عهدة مشتريات',
-    'عهدة تشغيل وصيانة',
-    'عهدة مصاريف سفر',
-    'عهدة مكتبية وإدارية',
-    'عهدة طوارئ',
-]
 
 openBtn.addEventListener('click', () => {
     overlay.showModal();

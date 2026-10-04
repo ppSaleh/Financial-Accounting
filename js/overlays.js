@@ -51,3 +51,29 @@ document.addEventListener("mouseup", (event) => {
     }
     mouseDownTarget = null;
 });
+// Tooltips
+const tooltipEl = document.getElementById('custom-tooltip');
+function attachTooltip(element, context) {
+    element.onmouseenter = () => showTooltip(element, context);
+    element.onmouseleave = hideTooltip;
+}
+function showTooltip(element, context) {
+    if (!element)
+        return;
+    tooltipEl.textContent = context;
+    tooltipEl.className = 'show';
+    const r = element.getBoundingClientRect();
+    let top = r.top + window.scrollY - tooltipEl.offsetHeight - 8;
+    if (r.top - tooltipEl.offsetHeight - 10 < 0)
+        top = r.bottom + window.scrollY + 8;
+    tooltipEl.style.top = `${top}px`;
+    tooltipEl.style.left = `${r.left + window.scrollX + (r.width / 2) - (tooltipEl.offsetWidth / 2)}px`;
+}
+async function hideTooltip() {
+    tooltipEl.className = '';
+}
+function attachtooltips() {
+    let elements = document.querySelectorAll(".has-tooltip");
+    elements.forEach(element => attachTooltip(element, element.dataset.tooltip ?? 'no tooltip'));
+}
+attachtooltips();

@@ -1,5 +1,5 @@
 import { supabaseClient } from "./auth";
-import { loadCustodies } from "./custodies";
+import { CUSTODY_TYPES, loadCustodies } from "./custodies";
 const overlay = document.getElementById('crt-cust-overlay');
 const overlayLayout = document.getElementById('crt-cust-overlay-layout');
 const message = document.getElementById('crt-cust-message');
@@ -95,13 +95,6 @@ window.addEventListener('beforeunload', () => {
     if (selectedFileUrl)
         URL.revokeObjectURL(selectedFileUrl);
 });
-const CUSTODY_TYPES = [
-    'عهدة مشتريات',
-    'عهدة تشغيل وصيانة',
-    'عهدة مصاريف سفر',
-    'عهدة مكتبية وإدارية',
-    'عهدة طوارئ',
-];
 openBtn.addEventListener('click', () => {
     overlay.showModal();
     message.classList = 'hidden';

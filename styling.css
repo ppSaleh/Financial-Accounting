@@ -47,6 +47,14 @@ body {
     font-family: 'Tajawal', sans-serif;
 }
 
+#custom-tooltip {
+    @apply absolute pointer-events-none w-max select-none whitespace-nowrap rounded-[10px] border border-accent-200 bg-white px-3 py-1.5 text-xs font-medium text-accent-700 shadow-[0_4px_12px_rgba(0,0,0,0.1)] opacity-0 z-[10001] transform-[translateY(5px)] transition-[opacity,transform,background-color] duration-[200ms,200ms,100ms] ease-[ease];
+}
+
+#custom-tooltip.show {
+    @apply opacity-100 transform-[translateY(0)];
+}
+
 
 .custodies-menu-header {
     @apply flex items-center justify-between border-b border-gray-100 px-4 py-3 text-right text-sm font-normal text-gray-700;
@@ -101,9 +109,12 @@ body {
 .btn-icon {
     @apply hover:bg-accent-50 text-accent-600 hover:text-accent-700 flex flex-shrink-0 items-center gap-2 h-10 px-3 py-4 rounded-md text-sm font-semibold cursor-pointer transition-colors;
 }
+.btn-green-icon {
+    @apply bg-brandgreen-500 hover:bg-brandgreen-600 text-white flex flex-shrink-0 items-center gap-2 h-10 px-3 py-4 rounded-md text-sm font-semibold cursor-pointer transition-colors;
+}
 
 .btn-dropdown {
-    @apply  hover:bg-gray-400 hover:text-accent-800 flex flex-shrink-0 items-center gap-2 h-8 pr-2 pl-4 rounded-md text-sm font-semibold cursor-pointer transition-colors;
+    @apply hover:bg-gray-400 hover:text-accent-800 flex flex-shrink-0 items-center gap-2 h-8 pr-2 pl-4 rounded-md text-sm font-semibold cursor-pointer transition-colors;
 }
 
 .btn-green {
@@ -114,6 +125,7 @@ body {
 .row-btn {
     @apply text-accent-500 hover:bg-accent-100 hover:text-accent-600 text-xs font-semibold px-4 py-1.5 rounded-md cursor-pointer transition-colors;
 }
+
 .row-btn-accent {
     @apply bg-accent-500 hover:bg-accent-600 text-white text-xs font-semibold px-4 py-1.5 rounded-md cursor-pointer transition-colors;
 }
@@ -125,6 +137,40 @@ body {
 .row-btn-red {
     @apply text-brandred-500 hover:bg-brandred-100 hover:text-brandred-600 text-xs font-semibold px-4 py-1.5 rounded-md cursor-pointer transition-colors;
 }
+
+
+.custody-type {
+    @apply inline-flex items-center justify-start gap-2 whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-semibold;
+    min-width: 7.75rem;
+}
+
+.custody-type svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.type-Purchasing {
+    @apply bg-emerald-50 text-emerald-800;
+}
+
+.type-OM {
+    @apply bg-sky-50 text-sky-800;
+}
+
+.type-Travel {
+    @apply bg-amber-50 text-amber-800;
+}
+
+.type-Admin {
+    @apply bg-violet-50 text-violet-800;
+}
+
+.type-Emergency {
+    @apply bg-rose-50 text-rose-800;
+}
+
+
 
 /* Keep utility visibility overrides effective against component display rules. */
 .hidden {

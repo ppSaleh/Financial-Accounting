@@ -1,12 +1,33 @@
 import { initCustodySearch } from './search';
 import { loadCustody } from "./custodyTransactions";
 import { isSupervisor, supabaseClient } from "./auth";
-export { loadCustodies, custodies, formatDateDDMMYYYY, switchTable };
+export { CUSTODY_TYPES, loadCustodies, custodies, formatDateDDMMYYYY, switchTable };
 let custodies = {};
 const riyalsSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="saudi-riyal" aria-hidden="true" class="lucide lucide-saudi-riyal"><path d="m20 19.5-5.5 1.2"></path><path d="M14.5 4v11.22a1 1 0 0 0 1.242.97L20 15.2"></path><path d="m2.978 19.351 5.549-1.363A2 2 0 0 0 10 16V2"></path><path d="M20 10 4 13.5"></path></svg>';
 const custodiesTable = document.getElementById('custodies-table');
 const custodiesBody = document.getElementById('custodies-body');
 const custodyTable = document.getElementById('custody-table');
+const CUSTODY_TYPES = [
+    'عهدة مشتريات',
+    'عهدة تشغيل وصيانة',
+    'عهدة مصاريف سفر',
+    'عهدة مكتبية وإدارية',
+    'عهدة طوارئ',
+];
+const CUSTODY_COLORS = {
+    'عهدة مشتريات': 'type-Purchasing',
+    'عهدة تشغيل وصيانة': 'type-OM',
+    'عهدة مصاريف سفر': 'type-Travel',
+    'عهدة مكتبية وإدارية': 'type-Admin',
+    'عهدة طوارئ': 'type-Emergency',
+};
+const CUSTODY_ICONS = {
+    'عهدة مشتريات': '<path d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"></path><path d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"></path><circle cx="18" cy="20" r="2"></circle><circle cx="8" cy="20" r="2"></circle>',
+    'عهدة تشغيل وصيانة': '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"></path>',
+    'عهدة مصاريف سفر': '<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"></path>',
+    'عهدة مكتبية وإدارية': '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"></path><path d="M8 11h8"></path><path d="M8 7h6"></path>',
+    'عهدة طوارئ': '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path>',
+};
 // Keep search, filter and sort controls together in search.ts.
 const applyCustodyFilters = initCustodySearch(() => custodies, renderCustodies);
 async function loadCustodies(forceRefresh = false) {
@@ -67,8 +88,10 @@ function renderCustodies(custodies) {
                                 <span class="flex items-center justify-end gap-1">${custody.balance.toFixed(2)}${riyalsSVG}</span>
                             </td>
                             <td class="px-4 py-3">
-                                <span
-                                    class="text-xs px-3 py-1 rounded-full font-semibold bg-blue-50 text-blue-800 border border-blue-200">${custody.type}</span>
+                            <div class="custody-type ${CUSTODY_COLORS[custody.type]}" dir="rtl">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CUSTODY_ICONS[custody.type]}</svg>
+                                <span>${custody.type.replace('عهدة ', '')}</span>
+                            </div>
                             </td>
                             <td class="px-4 py-3 mono text-gray-600 text-xs" dir="ltr">${formatDateDDMMYYYY(custody.created_at)}</td>
                             <td class="px-4 py-3 flex items-center gap-2 justify-center">
