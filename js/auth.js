@@ -45,6 +45,8 @@ function showLogin() {
     loginForm.classList.remove('hidden');
     appDiv.classList.add('hidden');
     profileMenu.classList.add('hidden');
+    loginMessage.textContent = '';
+    loginMessage.classList = 'hidden';
 }
 // Profile
 const profileMenu = document.getElementById("profile-menu");
