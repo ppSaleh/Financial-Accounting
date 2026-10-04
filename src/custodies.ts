@@ -95,7 +95,7 @@ function renderCustodies(custodies: Custody[]) {
                             <td class="px-4 py-3 mono text-gray-600 text-xs" dir="ltr">${formatDateDDMMYYYY(custody.created_at)}</td>
                             <td class="px-4 py-3 flex items-center gap-2 justify-center">
                                 <button
-                                    class="custodies-view row-btn">عرض
+                                    class="custodies-view row-btn-accent">عرض
                                     التفاصيل</button>
                             </td>`;
         row.querySelector('.custodies-view')?.addEventListener('click', () => {
